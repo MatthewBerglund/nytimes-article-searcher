@@ -21,6 +21,18 @@ h1 {
   grid-area: a;
 }
 
+button {
+  padding: 4px 6px;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.controls {
+  grid-area: b;
+}
+
 .search-results {
   grid-area: c;
   padding: 0 200px;
