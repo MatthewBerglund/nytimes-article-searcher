@@ -20,3 +20,8 @@ h1 {
   margin: 25px auto;
   grid-area: a;
 }
+
+.search-results {
+  grid-area: c;
+  padding: 0 200px;
+}
