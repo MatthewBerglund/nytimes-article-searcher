@@ -21,6 +21,7 @@ h1 {
 button {
   padding: 4px 6px;
   width: 200px;
+  height: 35px;
   justify-self: center;
 }
 
