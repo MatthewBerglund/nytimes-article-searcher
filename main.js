@@ -1,9 +1,10 @@
 const submitButton = document.getElementById('submit');
 submitButton.addEventListener('click', handleSubmitSearchClick);
 
+let articles;
 let resultsPage;
 
-function displayArticles(articles) {
+function displayArticles() {
   const searchResults = document.querySelector('.search-results');
   
   while (searchResults.firstChild) {
@@ -67,6 +68,19 @@ function displayArticles(articles) {
   }
 }
 
+function displayMetaInfo() {
+  const metaInfoDiv = document.querySelector('.meta-info');
+
+  while (metaInfoDiv.firstChild) {
+    metaInfoDiv.removeChild(metaInfoDiv.firstChild);
+  }
+  
+  const totalHits = articles.response.meta.hits;
+  const totalHitsPara = document.createElement('p');
+  totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
+  metaInfoDiv.appendChild(totalHitsPara);
+}
+
 function fetchArticles() {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
@@ -89,7 +103,9 @@ function fetchArticles() {
   fetch(fullURL)
     .then(response => response.json())
     .then(articlesJson => {
-      displayArticles(articlesJson);
+      articles = articlesJson;
+      displayArticles();
+      displayMetaInfo();
     });
 }
 

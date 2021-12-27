@@ -10,9 +10,9 @@ html {
 
 main {
   display: grid;
-  grid-template:
-              "a a" auto
-              "b c" auto;
+  grid-template:  "a a" auto
+                  "b c" 225px
+                  "d c" auto;
   padding: 0 100px;
 }
 
