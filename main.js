@@ -42,11 +42,12 @@ function displayArticles(articles) {
       abstractPara.textContent = article.abstract;
       articleDiv.appendChild(abstractPara);
 
-      if (article.multimedia.length > 0) {
-        const img = document.createElement('img');
-        const imageURL = article.multimedia.filter(image => image.subtype === 'blog225')[0].url;
-        img.src = `http://www.nytimes.com/${imageURL}`;
-        articleDiv.appendChild(img);
+      const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
+      
+      if (articleImage) {
+        const imgEl = document.createElement('img');
+        imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
+        articleDiv.appendChild(imgEl);
       }
 
       const keywordsPara = document.createElement('p');
