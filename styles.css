@@ -22,10 +22,22 @@ h1 {
 }
 
 button {
-  padding: 4px 6px;
-  width: 200px;
-  height: 35px;
+  font-family: inherit;
+  font-size: 1em;
+}
+
+#toggle-filters {
+  font-size: 14px;
   justify-self: center;
+}
+
+#submit {
+  padding: 4px 6px;
+  width: 135px;
+  height: 35px;
+  background: rgb(255, 235, 58);
+  border: 1px solid rgb(255, 230, 0);
+  border-radius: 5px;
 }
 
 button:hover {
@@ -37,19 +49,24 @@ nav {
   justify-content: space-between;
 }
 
-form {
-  border: 1px solid black;
+form, input {
+  border: 1px solid rgb(214, 214, 214);
   border-radius: 5px;
+}
+
+form {
   display: grid;
   grid-template-rows: 2fr 1fr;
+  row-gap: 10px;
   width: 900px;
   justify-self: center;
   align-self: center;
+  padding: 10px 15px;
 }
 
 .search-controls-main {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-self: center;
   align-items: center;
   height: 50px;
@@ -83,19 +100,24 @@ form {
   background: #00000018;
 }
 
+.date {
+  font-family: inherit;
+  font-size: 1em;
+  height: 40px;
+  width: 160px;
+  padding: 10px;
+}
+
+.date:hover {
+  cursor: pointer;
+}
+
 #search-term {
+  font-family: inherit;
+  font-size: 1em;
   height: 40px;
   width: 250px;
-}
-
-#begin-date {
-  height: 40px;
-  width: 100px;
-}
-
-#end-date {
-  height: 40px;
-  width: 100px;
+  padding: 10px;
 }
 
 #toggle-filters {
