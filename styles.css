@@ -88,12 +88,16 @@ form, input {
 
 form {
   display: grid;
-  grid-template-rows: 2fr 1fr;
+  grid-template-rows: 70px auto;
   row-gap: 10px;
   width: 900px;
   justify-self: center;
   align-self: center;
   padding: 10px 15px;
+}
+
+#filters {
+  display: none;
 }
 
 .search-controls-main {
@@ -169,4 +173,6 @@ form {
   align-self: center;
   border: none;
   background: none;
+  height: 30px;
+  width: 95px;
 }

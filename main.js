@@ -1,6 +1,9 @@
 const submitButton = document.getElementById('submit');
 submitButton.addEventListener('click', handleSubmitSearchClick);
 
+const toggleFiltersButton = document.getElementById('toggle-filters');
+toggleFiltersButton.addEventListener('click', handleToggleFiltersClick);
+
 let articles;
 let resultsPage;
 
@@ -107,6 +110,21 @@ function fetchArticles() {
       displayArticles();
       displayMetaInfo();
     });
+}
+
+function handleToggleFiltersClick(event) {
+  event.preventDefault();
+
+  const button = event.target;
+  const filtersDiv = document.getElementById('filters');
+  
+  if (filtersDiv.style.display === 'none') {
+    filtersDiv.style.display = 'block';
+    button.textContent = 'Hide filters';
+  } else {
+    filtersDiv.style.display = 'none';
+    button.textContent = 'Show filters';
+  }
 }
 
 function handlePreviousPageClick() {
