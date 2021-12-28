@@ -71,6 +71,14 @@ button:hover {
 nav {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+nav button {
+  height: 50px;
+  width: 50px;
+  background: rgb(255, 235, 58);
+  border: 1px solid rgb(255, 230, 0);
 }
 
 form, input {
@@ -112,7 +120,7 @@ form {
                   "keywords keywords";
   row-gap: 15px;
   background-color: #00000009;
-  margin-top: 25px;
+  margin-bottom: 25px;
   padding: 25px;
 }
 
@@ -141,6 +149,12 @@ form {
 
 .date:hover {
   cursor: pointer;
+}
+
+.meta-info {
+  justify-self: center;
+  margin-top: 25px;
+  margin-bottom: 25px;
 }
 
 #search-term {

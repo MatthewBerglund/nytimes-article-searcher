@@ -14,19 +14,6 @@ function displayArticles() {
   const articlesOnPage = articles.response.docs;
 
   if (articlesOnPage.length > 0) {
-    const resultsNav = document.createElement('nav');
-    searchResults.appendChild(resultsNav);
-
-    const prevTen = document.createElement('button');
-    prevTen.textContent = 'Previous 10';
-    resultsNav.appendChild(prevTen);
-    prevTen.addEventListener('click', handlePreviousPageClick);
-
-    const nextTen = document.createElement('button');
-    nextTen.textContent = 'Next 10';
-    resultsNav.appendChild(nextTen);
-    nextTen.addEventListener('click', handleNextPageClick); 
-    
     articlesOnPage.forEach(article => {
       const articleDiv = document.createElement('div');
       articleDiv.setAttribute('class', 'article');
@@ -65,6 +52,19 @@ function displayArticles() {
 
       searchResults.appendChild(articleDiv);
     });
+
+    const resultsNav = document.createElement('nav');
+    searchResults.appendChild(resultsNav);
+
+    const prevTen = document.createElement('button');
+    prevTen.textContent = '<';
+    resultsNav.appendChild(prevTen);
+    prevTen.addEventListener('click', handlePreviousPageClick);
+
+    const nextTen = document.createElement('button');
+    nextTen.textContent = '>';
+    resultsNav.appendChild(nextTen);
+    nextTen.addEventListener('click', handleNextPageClick);
   }
 }
 
