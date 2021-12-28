@@ -21,6 +21,30 @@ h1 {
   align-self: center;
 }
 
+h2 {
+  font-family: 'Vollkorn', serif;
+  font-weight: 400;
+}
+
+p {
+  grid-area: abstract;
+  align-self: center;
+}
+
+img {
+  grid-area: image;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+  grid-area: headline;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 button {
   font-family: inherit;
   font-size: 1em;
@@ -81,7 +105,13 @@ form {
 }
 
 .article {
-  background-color: #bdffe9;
+  display: grid;
+  grid-template:  "headline headline"
+                  "image ."
+                  "abstract abstract"
+                  "keywords keywords";
+  row-gap: 15px;
+  background-color: #00000009;
   margin-top: 25px;
   padding: 25px;
 }
@@ -90,14 +120,15 @@ form {
   display: flex;
   flex-flow: wrap;
   align-items: baseline;
+  grid-area: keywords;
 }
 
 .keyword {
   margin: 0 10px 4px 0;
-  border: 1px solid #00000018;
+  border: 1px solid #00000010;
   border-radius: 2px;
   padding: 3px;
-  background: #00000018;
+  background: #00000005;
 }
 
 .date {
