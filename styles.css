@@ -1,5 +1,5 @@
 html {
-  font-family: sans-serif;
+  font-family: 'Raleway', sans-serif;
 }
 
 * {
@@ -10,12 +10,15 @@ html {
 
 main {
   display: grid;
-  grid-template-rows: 1fr 1fr 2fr;
+  grid-template-rows: 150px auto auto;
   padding: 0 360px;
 }
 
 h1 {
+  font-family: 'Vollkorn', serif;
+  font-weight: 400;
   margin: 25px auto;
+  align-self: center;
 }
 
 button {
@@ -35,20 +38,21 @@ nav {
 }
 
 form {
-  /* border: 1px solid black; */
+  border: 1px solid black;
   border-radius: 5px;
   display: grid;
-  row-gap: 25px;
   grid-template-rows: 2fr 1fr;
   width: 900px;
-  margin: 0 auto;
+  justify-self: center;
+  align-self: center;
 }
 
 .search-controls-main {
   display: flex;
   justify-content: space-evenly;
+  align-self: center;
   align-items: center;
-  border: 1px solid black;
+  height: 50px;
 }
 
 .controls {
@@ -81,15 +85,21 @@ form {
 
 #search-term {
   height: 40px;
-  width: 300px;
+  width: 250px;
 }
 
 #begin-date {
   height: 40px;
-  width: 150px;
+  width: 100px;
 }
 
 #end-date {
   height: 40px;
-  width: 150px;
+  width: 100px;
+}
+
+#toggle-filters {
+  align-self: center;
+  border: none;
+  background: none;
 }
