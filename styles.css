@@ -62,6 +62,11 @@ button:hover {
   background: rgb(255, 196, 0);
 }
 
+button.disabled:hover {
+  cursor: default;
+  background: rgba(255, 196, 0, 0.705);
+}
+
 .date {
   font-family: inherit;
   font-size: 1em;

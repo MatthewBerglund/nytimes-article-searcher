@@ -61,6 +61,12 @@ function displayArticles() {
 
     const prevTen = document.createElement('button');
     prevTen.textContent = '<';
+
+    if (resultsPage === 0) {
+      prevTen.disabled = true;
+      prevTen.classList.add('disabled');
+    }
+
     resultsNav.appendChild(prevTen);
     prevTen.addEventListener('click', handlePreviousPageClick);
 
