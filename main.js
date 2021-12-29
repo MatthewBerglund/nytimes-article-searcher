@@ -84,7 +84,7 @@ function displayMetaInfo() {
   metaInfoDiv.appendChild(totalHitsPara);
 }
 
-function fetchArticles() {
+async function fetchArticles() {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
   const query = document.getElementById('search-term').value;
@@ -103,13 +103,11 @@ function fetchArticles() {
     fullURL += `&end_date=${endDate}`;
   }
 
-  fetch(fullURL)
-    .then(response => response.json())
-    .then(articlesJson => {
-      articles = articlesJson;
-      displayArticles();
-      displayMetaInfo();
-    });
+  const response = await fetch(fullURL);
+  articles = await response.json();
+
+  displayArticles();
+  displayMetaInfo();
 }
 
 function handleToggleFiltersClick(event) {
