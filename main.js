@@ -72,6 +72,12 @@ function displayArticles() {
 
     const nextTen = document.createElement('button');
     nextTen.textContent = '>';
+
+    if (articlesOnPage.length < 10) {
+      nextTen.disabled = true;
+      nextTen.classList.add('disabled');
+    }
+
     resultsNav.appendChild(nextTen);
     nextTen.addEventListener('click', handleNextPageClick);
   }
