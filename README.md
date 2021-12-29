@@ -1,1 +1,1 @@
-# nytimes-article-searcher
+# NYT Article Searcher
