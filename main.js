@@ -56,31 +56,60 @@ function displayArticles() {
       searchResults.appendChild(articleDiv);
     });
 
-    const resultsNav = document.createElement('nav');
-    searchResults.appendChild(resultsNav);
+    // const resultsNav = document.createElement('nav');
+    // searchResults.appendChild(resultsNav);
 
-    const prevTen = document.createElement('button');
-    prevTen.textContent = '<';
+    // const prevTen = document.createElement('button');
+    // prevTen.textContent = '<';
 
-    if (resultsPage === 0) {
-      prevTen.disabled = true;
-      prevTen.classList.add('disabled');
-    }
+    // if (resultsPage === 0) {
+    //   prevTen.disabled = true;
+    //   prevTen.classList.add('disabled');
+    // }
 
-    resultsNav.appendChild(prevTen);
-    prevTen.addEventListener('click', handlePreviousPageClick);
+    // resultsNav.appendChild(prevTen);
+    // prevTen.addEventListener('click', handlePreviousPageClick);
 
-    const nextTen = document.createElement('button');
-    nextTen.textContent = '>';
+    // const nextTen = document.createElement('button');
+    // nextTen.textContent = '>';
 
-    if (articlesOnPage.length < 10) {
-      nextTen.disabled = true;
-      nextTen.classList.add('disabled');
-    }
+    // if (articlesOnPage.length < 10) {
+    //   nextTen.disabled = true;
+    //   nextTen.classList.add('disabled');
+    // }
 
-    resultsNav.appendChild(nextTen);
-    nextTen.addEventListener('click', handleNextPageClick);
+    // resultsNav.appendChild(nextTen);
+    // nextTen.addEventListener('click', handleNextPageClick);
   }
+}
+
+function displayNavigation() {
+  const resultsNav = document.createElement('nav');
+  
+  const previousPage = document.createElement('button');
+  previousPage.addEventListener('click', handlePreviousPageClick);
+  previousPage.id = 'prev-page-button';
+  previousPage.textContent = '<';
+
+  if (resultsPage === 0) {
+    previousPage.disabled = true;
+    previousPage.classList.add('disabled');
+  }
+
+  resultsNav.appendChild(previousPage);
+  
+  const nextPage = document.createElement('button');
+  nextPage.addEventListener('click', handleNextPageClick);
+  nextPage.id = 'next-page-button';
+  nextPage.textContent = '>';
+  
+  if (articles.response.docs.length < 10) {
+    nextPage.disabled = true;
+    nextPage.classList.add('disabled');
+  }
+
+  resultsNav.appendChild(nextPage);
+  document.querySelector('.search-results').appendChild(resultsNav);
 }
 
 function displayMetaInfo() {
@@ -119,7 +148,6 @@ async function fetchArticles() {
   articles = await response.json();
 
   displayArticles();
-  displayMetaInfo();
 }
 
 function handleToggleFiltersClick(event) {
@@ -138,19 +166,22 @@ function handleToggleFiltersClick(event) {
 }
 
 function handlePreviousPageClick() {
-  if (resultsPage > 0) {
-    resultsPage--;
-  }
-  fetchArticles();
+  resultsPage--;
+  fetchArticles().then(displayNavigation);
+    
+ 
 }
 
 function handleNextPageClick() {
   resultsPage++;
-  fetchArticles();
+  fetchArticles().then(displayNavigation);
 }
 
 function handleSubmitSearchClick(event) {
   event.preventDefault();
   resultsPage = 0;
-  fetchArticles();
+  fetchArticles().then(() => {
+    displayNavigation();
+    displayMetaInfo();
+  });
 }
