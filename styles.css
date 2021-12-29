@@ -1,3 +1,5 @@
+/* General */
+
 html {
   font-family: 'Raleway', sans-serif;
 }
@@ -21,6 +23,90 @@ h1 {
   align-self: center;
 }
 
+
+/* Navigation and Form Controls */
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+form, input {
+  border: 1px solid rgb(214, 214, 214);
+  border-radius: 5px;
+}
+
+form {
+  display: grid;
+  grid-template-rows: 70px auto;
+  row-gap: 10px;
+  width: 900px;
+  justify-self: center;
+  align-self: center;
+  padding: 10px 15px;
+}
+
+button {
+  font-family: inherit;
+  font-size: 1em;
+  background: rgb(255, 235, 58);
+  border: 1px solid rgb(255, 230, 0);
+  border-radius: 5px;
+  padding: 0.6em 1em;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.date {
+  font-family: inherit;
+  font-size: 1em;
+  height: 40px;
+  width: 160px;
+  padding: 10px;
+}
+
+.date:hover {
+  cursor: pointer;
+}
+
+#search-term {
+  font-family: inherit;
+  font-size: 1em;
+  height: 40px;
+  width: 250px;
+  padding: 10px;
+}
+
+#filters {
+  display: none;
+}
+
+#toggle-filters {
+  align-self: center;
+  border: none;
+  background: none;
+  font-size: 14px;
+  justify-self: center;
+  padding: 1em;
+}
+.search-controls-main {
+  display: flex;
+  justify-content: space-between;
+  align-self: center;
+  align-items: center;
+  height: 50px;
+}
+
+.controls {
+  border: 1px solid black;
+}
+
+
+/* Search results and articles */
+
 h2 {
   font-family: 'Vollkorn', serif;
   font-weight: 400;
@@ -43,73 +129,6 @@ a {
 
 a:hover {
   text-decoration: underline;
-}
-
-button {
-  font-family: inherit;
-  font-size: 1em;
-}
-
-#toggle-filters {
-  font-size: 14px;
-  justify-self: center;
-}
-
-#submit {
-  padding: 4px 6px;
-  width: 135px;
-  height: 35px;
-  background: rgb(255, 235, 58);
-  border: 1px solid rgb(255, 230, 0);
-  border-radius: 5px;
-}
-
-button:hover {
-  cursor: pointer;
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 25px;
-}
-
-nav button {
-  height: 50px;
-  width: 50px;
-  background: rgb(255, 235, 58);
-  border: 1px solid rgb(255, 230, 0);
-}
-
-form, input {
-  border: 1px solid rgb(214, 214, 214);
-  border-radius: 5px;
-}
-
-form {
-  display: grid;
-  grid-template-rows: 70px auto;
-  row-gap: 10px;
-  width: 900px;
-  justify-self: center;
-  align-self: center;
-  padding: 10px 15px;
-}
-
-#filters {
-  display: none;
-}
-
-.search-controls-main {
-  display: flex;
-  justify-content: space-between;
-  align-self: center;
-  align-items: center;
-  height: 50px;
-}
-
-.controls {
-  border: 1px solid black;
 }
 
 .search-results {
@@ -143,36 +162,8 @@ form {
   background: #00000005;
 }
 
-.date {
-  font-family: inherit;
-  font-size: 1em;
-  height: 40px;
-  width: 160px;
-  padding: 10px;
-}
-
-.date:hover {
-  cursor: pointer;
-}
-
 .meta-info {
   justify-self: center;
   margin-top: 25px;
   margin-bottom: 25px;
-}
-
-#search-term {
-  font-family: inherit;
-  font-size: 1em;
-  height: 40px;
-  width: 250px;
-  padding: 10px;
-}
-
-#toggle-filters {
-  align-self: center;
-  border: none;
-  background: none;
-  height: 30px;
-  width: 95px;
 }
