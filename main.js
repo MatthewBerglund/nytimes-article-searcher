@@ -55,31 +55,6 @@ function displayArticles() {
 
       searchResults.appendChild(articleDiv);
     });
-
-    // const resultsNav = document.createElement('nav');
-    // searchResults.appendChild(resultsNav);
-
-    // const prevTen = document.createElement('button');
-    // prevTen.textContent = '<';
-
-    // if (resultsPage === 0) {
-    //   prevTen.disabled = true;
-    //   prevTen.classList.add('disabled');
-    // }
-
-    // resultsNav.appendChild(prevTen);
-    // prevTen.addEventListener('click', handlePreviousPageClick);
-
-    // const nextTen = document.createElement('button');
-    // nextTen.textContent = '>';
-
-    // if (articlesOnPage.length < 10) {
-    //   nextTen.disabled = true;
-    //   nextTen.classList.add('disabled');
-    // }
-
-    // resultsNav.appendChild(nextTen);
-    // nextTen.addEventListener('click', handleNextPageClick);
   }
 }
 
@@ -146,8 +121,6 @@ async function fetchArticles() {
 
   const response = await fetch(fullURL);
   articles = await response.json();
-
-  displayArticles();
 }
 
 function handleToggleFiltersClick(event) {
@@ -167,20 +140,25 @@ function handleToggleFiltersClick(event) {
 
 function handlePreviousPageClick() {
   resultsPage--;
-  fetchArticles().then(displayNavigation);
-    
- 
+  fetchArticles().then(() => {
+    displayArticles();
+    displayNavigation();
+  });
 }
 
 function handleNextPageClick() {
   resultsPage++;
-  fetchArticles().then(displayNavigation);
+  fetchArticles().then(() => {
+    displayArticles();
+    displayNavigation();
+  });
 }
 
 function handleSubmitSearchClick(event) {
   event.preventDefault();
   resultsPage = 0;
   fetchArticles().then(() => {
+    displayArticles();
     displayNavigation();
     displayMetaInfo();
   });
