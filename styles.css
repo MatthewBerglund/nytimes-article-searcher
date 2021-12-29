@@ -51,14 +51,15 @@ form {
 button {
   font-family: inherit;
   font-size: 1em;
-  background: rgb(255, 235, 58);
-  border: 1px solid rgb(255, 230, 0);
+  background: rgba(255, 196, 0, 0.705);
+  border: 1px solid rgb(255, 196, 0);
   border-radius: 5px;
   padding: 0.6em 1em;
 }
 
 button:hover {
   cursor: pointer;
+  background: rgb(255, 196, 0);
 }
 
 .date {
