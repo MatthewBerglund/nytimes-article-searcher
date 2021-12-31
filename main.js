@@ -63,7 +63,6 @@ function displayNavigation() {
   
   const previousPage = document.createElement('button');
   previousPage.addEventListener('click', handlePaginationClick);
-  // previousPage.addEventListener('click', handlePreviousPageClick);
   previousPage.id = 'prev-page-button';
   previousPage.textContent = '<';
 
@@ -76,7 +75,6 @@ function displayNavigation() {
   
   const nextPage = document.createElement('button');
   nextPage.addEventListener('click', handlePaginationClick);
-  // nextPage.addEventListener('click', handleNextPageClick);
   nextPage.id = 'next-page-button';
   nextPage.textContent = '>';
   
@@ -121,8 +119,41 @@ async function fetchArticles() {
     fullURL += `&end_date=${endDate}`;
   }
 
+  fullURL += getNewsDeskURLComponent();
+
   const response = await fetch(fullURL);
   articles = await response.json();
+}
+
+function getNewsDeskURLComponent() {
+  const newsDeskFilters = document.getElementById('newsdesk').elements;
+  let selectedFilters = [];
+  
+  for (let i = 0; i < newsDeskFilters.length; i++) {
+    const currentFilter = newsDeskFilters.item(i);
+    if (currentFilter.checked) {
+      selectedFilters.push(currentFilter.value);
+    }
+  }
+
+  if (selectedFilters.length === 0) {
+    return '';
+  } else {
+    let filterString = '';
+
+    for (let i = 0; i < selectedFilters.length; i++) {
+      let currentFilter = selectedFilters[i];
+      if (i === selectedFilters.length - 1) {
+        filterString += `"${currentFilter}"`;
+      } else {
+        filterString += `"${currentFilter}" `;
+      }
+    }
+
+    filterString = encodeURIComponent(filterString);
+    
+    return `&fq=news_desk:(${filterString})`;
+  }
 }
 
 function handleToggleFiltersClick(event) {
