@@ -126,14 +126,16 @@ async function fetchArticles() {
 function handleToggleFiltersClick(event) {
   event.preventDefault();
 
+  console.log('It ran.');
+
   const button = event.target;
   const filtersDiv = document.getElementById('filters');
   
-  if (filtersDiv.style.display === 'none') {
+  if (!filtersDiv.style.display) {
     filtersDiv.style.display = 'block';
     button.textContent = 'Hide filters';
   } else {
-    filtersDiv.style.display = 'none';
+    filtersDiv.style.display = '';
     button.textContent = 'Show filters';
   }
 }
