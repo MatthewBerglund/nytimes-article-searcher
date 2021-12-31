@@ -128,8 +128,6 @@ async function fetchArticles() {
 function handleToggleFiltersClick(event) {
   event.preventDefault();
 
-  console.log('It ran.');
-
   const button = event.target;
   const filtersDiv = document.getElementById('filters');
   
