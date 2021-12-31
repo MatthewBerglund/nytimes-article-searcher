@@ -91,6 +91,10 @@ button.disabled:hover {
   display: none;
 }
 
+fieldset {
+  border: none;
+}
+
 #toggle-filters {
   align-self: center;
   border: none;
