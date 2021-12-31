@@ -145,6 +145,7 @@ function handlePreviousPageClick() {
   fetchArticles().then(() => {
     displayArticles();
     displayNavigation();
+    scroll(0, 0);
   });
 }
 
@@ -153,6 +154,7 @@ function handleNextPageClick() {
   fetchArticles().then(() => {
     displayArticles();
     displayNavigation();
+    scroll(0, 0);
   });
 }
 
