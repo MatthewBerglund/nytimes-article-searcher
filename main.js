@@ -62,7 +62,8 @@ function displayNavigation() {
   const resultsNav = document.createElement('nav');
   
   const previousPage = document.createElement('button');
-  previousPage.addEventListener('click', handlePreviousPageClick);
+  previousPage.addEventListener('click', handlePaginationClick);
+  // previousPage.addEventListener('click', handlePreviousPageClick);
   previousPage.id = 'prev-page-button';
   previousPage.textContent = '<';
 
@@ -74,7 +75,8 @@ function displayNavigation() {
   resultsNav.appendChild(previousPage);
   
   const nextPage = document.createElement('button');
-  nextPage.addEventListener('click', handleNextPageClick);
+  nextPage.addEventListener('click', handlePaginationClick);
+  // nextPage.addEventListener('click', handleNextPageClick);
   nextPage.id = 'next-page-button';
   nextPage.textContent = '>';
   
@@ -140,17 +142,13 @@ function handleToggleFiltersClick(event) {
   }
 }
 
-function handlePreviousPageClick() {
-  resultsPage--;
-  fetchArticles().then(() => {
-    displayArticles();
-    displayNavigation();
-    scroll(0, 0);
-  });
-}
+function handlePaginationClick(event) {
+  if (event.target.id === 'next-page-button') {
+    resultsPage++;
+  } else {
+    resultsPage--;
+  }
 
-function handleNextPageClick() {
-  resultsPage++;
   fetchArticles().then(() => {
     displayArticles();
     displayNavigation();
