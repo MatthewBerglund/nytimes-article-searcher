@@ -119,11 +119,19 @@ async function fetchArticles() {
 
   let filterSubcomponents = [];
   const newsDeskFilters = Array.from(document.getElementById('newsdesk').elements);
-  const selectedFilters = newsDeskFilters.filter(option => option.checked);
+  const selectedNewsDesks = newsDeskFilters.filter(newsDesk => newsDesk.checked);
 
-  if (selectedFilters.length > 0) {
-    const newsDeskComponent = getNewsDeskURLComponent(selectedFilters);
+  if (selectedNewsDesks.length > 0) {
+    const newsDeskComponent = getNewsDeskURLComponent(selectedNewsDesks);
     filterSubcomponents.push(newsDeskComponent);
+  }
+
+  const materialTypeFilters = Array.from(document.getElementById('material-types').elements);
+  const selectedTypes = materialTypeFilters.filter(type => type.checked);
+
+  if (selectedTypes.length > 0) {
+    const materialTypeComponent = getMaterialTypeURLComponent(selectedTypes);
+    filterSubcomponents.push(materialTypeComponent);
   }
 
   const location = document.getElementById('location-filter').value;
@@ -160,6 +168,23 @@ function getLocationURLComponent(locationString) {
   locationString.trim();
   locationString = encodeURIComponent(`"${locationString}"`);
   return `glocations:(${locationString})`;
+}
+
+function getMaterialTypeURLComponent(typesArray) {
+  let filterOptions = '';
+
+  for (let i = 0; i < typesArray.length; i++) {
+    let currentType = typesArray[i].value;
+    
+    if (i === 0) {
+      filterOptions += `"${currentType}"`;
+    } else {
+      filterOptions += ` "${currentType}"`;
+    }
+  }
+
+  filterOptions = encodeURIComponent(filterOptions);
+  return `type_of_material:(${filterOptions})`;
 }
 
 function getNewsDeskURLComponent(newsDeskArray) {
