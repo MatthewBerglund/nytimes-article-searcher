@@ -167,10 +167,11 @@ function getNewsDeskURLComponent(newsDeskArray) {
 
   for (let i = 0; i < newsDeskArray.length; i++) {
     let currentNewsDesk = newsDeskArray[i].value;
-    if (i === newsDeskArray.length - 1) {
+    
+    if (i === 0) {
       filterOptions += `"${currentNewsDesk}"`;
     } else {
-      filterOptions += `"${currentNewsDesk}" `;
+      filterOptions += ` "${currentNewsDesk}"`;
     }
   }
 
