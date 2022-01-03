@@ -110,50 +110,72 @@ async function fetchArticles() {
   let endDate = document.getElementById('end-date').value;
 
   if (beginDate) {
-    beginDate = beginDate.replaceAll('-', '');
     fullURL += `&begin_date=${beginDate}`;
   }
   
   if (endDate) {
-    endDate = endDate.replaceAll('-', '');
     fullURL += `&end_date=${endDate}`;
   }
 
-  fullURL += getNewsDeskURLComponent();
+  let filterSubcomponents = [];
+  const newsDeskFilters = Array.from(document.getElementById('newsdesk').elements);
+  const selectedFilters = newsDeskFilters.filter(option => option.checked);
+
+  if (selectedFilters.length > 0) {
+    const newsDeskComponent = getNewsDeskURLComponent(selectedFilters);
+    filterSubcomponents.push(newsDeskComponent);
+  }
+
+  const location = document.getElementById('location-filter').value;
+  
+  if (location) {
+    const locationComponent = getLocationURLComponent(location);
+    filterSubcomponents.push(locationComponent);
+  }
+
+  if (filterSubcomponents.length > 0) {
+    fullURL += getFilterURLComponent(filterSubcomponents);
+  }
 
   const response = await fetch(fullURL);
   articles = await response.json();
 }
 
-function getNewsDeskURLComponent() {
-  const newsDeskFilters = document.getElementById('newsdesk').elements;
-  let selectedFilters = [];
-  
-  for (let i = 0; i < newsDeskFilters.length; i++) {
-    const currentFilter = newsDeskFilters.item(i);
-    if (currentFilter.checked) {
-      selectedFilters.push(currentFilter.value);
+function getFilterURLComponent(subcomponentArray) {
+  let urlComponent = '&fq=';
+
+  for (let i = 0; i < subcomponentArray.length; i++) {
+    let currentSubcomponent = subcomponentArray[i];
+    if (i === 0) {
+      urlComponent += currentSubcomponent;
+    } else {
+      urlComponent += ` AND ${currentSubcomponent}`;
     }
   }
 
-  if (selectedFilters.length === 0) {
-    return '';
-  } else {
-    let filterString = '';
+  return urlComponent;
+}
 
-    for (let i = 0; i < selectedFilters.length; i++) {
-      let currentFilter = selectedFilters[i];
-      if (i === selectedFilters.length - 1) {
-        filterString += `"${currentFilter}"`;
-      } else {
-        filterString += `"${currentFilter}" `;
-      }
+function getLocationURLComponent(locationString) {
+  locationString.trim();
+  locationString = encodeURIComponent(`"${locationString}"`);
+  return `glocations:(${locationString})`;
+}
+
+function getNewsDeskURLComponent(newsDeskArray) {
+  let filterOptions = '';
+
+  for (let i = 0; i < newsDeskArray.length; i++) {
+    let currentNewsDesk = newsDeskArray[i].value;
+    if (i === newsDeskArray.length - 1) {
+      filterOptions += `"${currentNewsDesk}"`;
+    } else {
+      filterOptions += `"${currentNewsDesk}" `;
     }
-
-    filterString = encodeURIComponent(filterString);
-    
-    return `&fq=news_desk:(${filterString})`;
   }
+
+  filterOptions = encodeURIComponent(filterOptions);
+  return `news_desk:(${filterOptions})`;
 }
 
 function handleToggleFiltersClick(event) {
