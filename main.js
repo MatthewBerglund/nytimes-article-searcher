@@ -108,10 +108,14 @@ async function fetchArticles() {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
   const query = document.getElementById('search-term').value;
-  let fullURL = `${baseURL}?q=${query}&page=${resultsPage}&api-key=${key}`;
+  let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
   
   let beginDate = document.getElementById('begin-date').value;
   let endDate = document.getElementById('end-date').value;
+
+  if (query) {
+    fullURL += `&q=${query}`;
+  }
 
   if (beginDate) {
     fullURL += `&begin_date=${beginDate}`;
