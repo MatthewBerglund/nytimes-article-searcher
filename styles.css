@@ -34,6 +34,28 @@ nav {
   padding: 0 200px;
 }
 
+label:hover {
+  cursor: pointer;
+}
+
+input[type="checkbox"]:hover {
+  cursor: pointer;
+}
+
+select {
+  color: rgb(0, 97, 187);
+  font-family: inherit;
+  font-size: 1em;
+  padding: 2px;
+  background: none;
+  border: none;
+}
+
+select:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 form, input {
   border: 1px solid rgb(214, 214, 214);
   border-radius: 5px;
@@ -88,12 +110,51 @@ button.disabled:hover {
   padding: 10px;
 }
 
+input[type="checkbox"] {
+  width: 2.5em;
+  height: 1.5em;
+}
+
 #filters {
   display: none;
+  grid-template:  "newsDesk material" 2fr
+                  "location     .   " 1fr / 1fr 2fr;
+  row-gap: 15px;
+  column-gap: 15px;
+  margin-top: 20px;
+}
+
+#newsdesk {
+  grid-area: newsDesk;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template:  "label label"
+                  "options options"
+                  "options options"
+                  "options options"
+                  "options options"
+                  "options options";
+  width: 390px;
+}
+
+#material-types {
+  grid-area: material;
+  width: 150px;
+}
+
+#location-filter {
+  font-family: inherit;
+  font-size: 1em;
+  height: 40px;
+  width: 250px;
+  padding: 10px;
+  display: block;
 }
 
 fieldset {
-  border: none;
+  border: 1px solid rgb(214, 214, 214);
+  border-radius: 5px;
+  padding: 10px;
 }
 
 #toggle-filters {
@@ -118,6 +179,7 @@ fieldset {
 
 .sort-controls {
   display: none;
+  align-items: center;
   justify-content: flex-end;
   padding: 0 200px;
   margin: 25px 0;

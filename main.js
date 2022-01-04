@@ -232,7 +232,7 @@ function handleToggleFiltersClick(event) {
   const filtersDiv = document.getElementById('filters');
   
   if (!filtersDiv.style.display) {
-    filtersDiv.style.display = 'block';
+    filtersDiv.style.display = 'grid';
     button.textContent = 'Hide filters';
   } else {
     filtersDiv.style.display = '';
