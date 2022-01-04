@@ -1,8 +1,11 @@
-const submitButton = document.getElementById('submit');
-submitButton.addEventListener('click', handleSubmitSearch);
-
 const sortSelect = document.getElementById('sort-select');
-sortSelect.addEventListener('change', handleSubmitSearch);
+sortSelect.addEventListener('change', submitNewSearch);
+
+const submitButton = document.getElementById('submit');
+submitButton.addEventListener('click', event => {
+  sortSelect.value = 'relevance';
+  submitNewSearch(event);
+});
 
 const toggleFiltersButton = document.getElementById('toggle-filters');
 toggleFiltersButton.addEventListener('click', handleToggleFiltersClick);
@@ -251,7 +254,7 @@ function handlePaginationClick(event) {
   });
 }
 
-function handleSubmitSearch(event) {
+function submitNewSearch(event) {
   event.preventDefault();
   resultsPage = 0;
   fetchArticles().then(() => {
