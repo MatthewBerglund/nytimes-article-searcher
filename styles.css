@@ -28,9 +28,10 @@ h1 {
 /* Navigation and Form Controls */
 
 nav {
-  display: flex;
+  display: none;
   justify-content: space-between;
   margin-bottom: 25px;
+  padding: 0 200px;
 }
 
 form, input {
