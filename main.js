@@ -1,5 +1,8 @@
 const submitButton = document.getElementById('submit');
-submitButton.addEventListener('click', handleSubmitSearchClick);
+submitButton.addEventListener('click', handleSubmitSearch);
+
+const sortSelect = document.getElementById('sort-select');
+sortSelect.addEventListener('change', handleSubmitSearch);
 
 const toggleFiltersButton = document.getElementById('toggle-filters');
 toggleFiltersButton.addEventListener('click', handleToggleFiltersClick);
@@ -67,6 +70,7 @@ function displayArticles() {
 
 function updateNavDisplay() {
   const nav = document.querySelector('nav');
+  const sortDiv = document.querySelector('.sort-controls');
 
   if (totalHits > 0) {
     if (resultsPage === 0) {
@@ -87,8 +91,10 @@ function updateNavDisplay() {
     }
 
     nav.style.display = 'flex';
+    sortDiv.style.display = 'flex';
   } else {
     nav.style.display = 'none';
+    sortDiv.style.display = 'none';
   }
 }
 
@@ -107,22 +113,26 @@ function displayMetaInfo() {
 async function fetchArticles() {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
-  const query = document.getElementById('search-term').value;
   let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
   
-  let beginDate = document.getElementById('begin-date').value;
-  let endDate = document.getElementById('end-date').value;
-
+  const query = document.getElementById('search-term').value;
   if (query) {
     fullURL += `&q=${query}`;
   }
 
+  const beginDate = document.getElementById('begin-date').value;
   if (beginDate) {
     fullURL += `&begin_date=${beginDate}`;
   }
   
+  const endDate = document.getElementById('end-date').value;
   if (endDate) {
     fullURL += `&end_date=${endDate}`;
+  }
+
+  const sortByValue = sortSelect.value;
+  if (sortByValue) {
+    fullURL += `&sort=${sortByValue}`;
   }
 
   let filterSubcomponents = [];
@@ -143,7 +153,6 @@ async function fetchArticles() {
   }
 
   const location = document.getElementById('location-filter').value;
-  
   if (location) {
     const locationComponent = getLocationURLComponent(location);
     filterSubcomponents.push(locationComponent);
@@ -242,7 +251,7 @@ function handlePaginationClick(event) {
   });
 }
 
-function handleSubmitSearchClick(event) {
+function handleSubmitSearch(event) {
   event.preventDefault();
   resultsPage = 0;
   fetchArticles().then(() => {

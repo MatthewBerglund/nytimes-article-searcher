@@ -116,6 +116,16 @@ fieldset {
   border: 1px solid black;
 }
 
+.sort-controls {
+  display: none;
+  justify-content: flex-end;
+  padding: 0 200px;
+  margin: 25px 0;
+}
+
+#sort-select {
+  margin-left: 10px;
+}
 
 /* Search results and articles */
 
