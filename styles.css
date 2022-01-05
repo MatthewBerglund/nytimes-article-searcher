@@ -16,9 +16,12 @@ main {
   padding: 0 360px;
 }
 
-h1 {
+h1, h2 {
   font-family: 'Vollkorn', serif;
   font-weight: 400;
+}
+
+h1 {
   margin: 25px auto;
   align-self: center;
   text-align: center;
@@ -190,37 +193,14 @@ fieldset {
   margin-left: 10px;
 }
 
+
 /* Search results and articles */
-
-h2 {
-  font-family: 'Vollkorn', serif;
-  font-weight: 400;
-}
-
-p {
-  grid-area: abstract;
-  align-self: center;
-}
-
-img {
-  grid-area: image;
-}
-
-a {
-  color: black;
-  text-decoration: none;
-  grid-area: headline;
-}
-
-a:hover {
-  text-decoration: underline;
-}
 
 #search-results-container {
   padding: 0 200px;
 }
 
-.article {
+.article-container {
   display: grid;
   grid-template:  "headline headline"
                   "image ."
@@ -230,6 +210,25 @@ a:hover {
   background-color: #00000009;
   margin-bottom: 25px;
   padding: 25px;
+}
+
+.headline-link {
+  color: black;
+  text-decoration: none;
+  grid-area: headline;
+}
+
+.headline-link:hover {
+  text-decoration: underline;
+}
+
+.article-img {
+  grid-area: image;
+}
+
+.article-abstract {
+  grid-area: abstract;
+  align-self: center;
 }
 
 .keywords {

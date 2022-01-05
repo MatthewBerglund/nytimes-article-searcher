@@ -32,11 +32,12 @@ function displayArticles() {
   if (articlesOnPage.length > 0) {
     articlesOnPage.forEach(article => {
       const articleDiv = document.createElement('div');
-      articleDiv.setAttribute('class', 'article');
+      articleDiv.setAttribute('class', 'article-container');
 
       const anchor = document.createElement('a');
       anchor.href = article.web_url;
       anchor.target = '_blank';
+      anchor.setAttribute('class', 'headline-link');
       articleDiv.appendChild(anchor);
 
       const headline = document.createElement('h2');
@@ -45,12 +46,14 @@ function displayArticles() {
 
       const abstractPara = document.createElement('p');
       abstractPara.textContent = article.abstract;
+      abstractPara.setAttribute('class', 'article-abstract');
       articleDiv.appendChild(abstractPara);
 
       const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
       if (articleImage) {
         const imgEl = document.createElement('img');
         imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
+        imgEl.setAttribute('class', 'article-img');
         articleDiv.appendChild(imgEl);
       }
 
