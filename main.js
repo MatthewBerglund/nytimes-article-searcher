@@ -1,4 +1,4 @@
-const sortSelect = document.getElementById('sort-select');
+const sortSelect = document.getElementById('sort-by-select');
 sortSelect.addEventListener('change', submitNewSearch);
 
 const submitButton = document.getElementById('submit');
@@ -7,13 +7,13 @@ submitButton.addEventListener('click', event => {
   submitNewSearch(event);
 });
 
-const toggleFiltersButton = document.getElementById('toggle-filters');
-toggleFiltersButton.addEventListener('click', handleToggleFiltersClick);
+const filtersButton = document.getElementById('filters-button');
+filtersButton.addEventListener('click', handleToggleFiltersClick);
 
-const previousPageButton = document.getElementById('prev-page-btn');
+const previousPageButton = document.getElementById('previous-page-button');
 previousPageButton.addEventListener('click', handlePaginationClick);
 
-const nextPageButton = document.getElementById('next-page-btn');
+const nextPageButton = document.getElementById('next-page-button');
 nextPageButton.addEventListener('click', handlePaginationClick);
 
 let articles;
@@ -21,7 +21,7 @@ let totalHits;
 let resultsPage;
 
 function displayArticles() {
-  const searchResults = document.querySelector('.search-results');
+  const searchResults = document.getElementById('search-results-container');
   
   while (searchResults.firstChild) {
     searchResults.removeChild(searchResults.firstChild);
@@ -73,7 +73,7 @@ function displayArticles() {
 
 function updateNavDisplay() {
   const nav = document.querySelector('nav');
-  const sortDiv = document.querySelector('.sort-controls');
+  const sortDiv = document.getElementById('sort-by-container');
 
   if (totalHits > 0) {
     if (resultsPage === 0) {
@@ -102,7 +102,7 @@ function updateNavDisplay() {
 }
 
 function displayMetaInfo() {
-  const metaInfoDiv = document.querySelector('.meta-info');
+  const metaInfoDiv = document.getElementById('total-hits-container');
 
   while (metaInfoDiv.firstChild) {
     metaInfoDiv.removeChild(metaInfoDiv.firstChild);
@@ -118,7 +118,7 @@ async function fetchArticles() {
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
   let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
   
-  const query = document.getElementById('search-term').value;
+  const query = document.getElementById('query-input').value;
   if (query) {
     fullURL += `&q=${query}`;
   }
@@ -139,7 +139,7 @@ async function fetchArticles() {
   }
 
   let filterSubcomponents = [];
-  const newsDeskFilters = Array.from(document.getElementById('newsdesk').elements);
+  const newsDeskFilters = Array.from(document.getElementById('newsdesk-fieldset').elements);
   const selectedNewsDesks = newsDeskFilters.filter(newsDesk => newsDesk.checked);
 
   if (selectedNewsDesks.length > 0) {
@@ -147,7 +147,7 @@ async function fetchArticles() {
     filterSubcomponents.push(newsDeskComponent);
   }
 
-  const materialTypeFilters = Array.from(document.getElementById('material-types').elements);
+  const materialTypeFilters = Array.from(document.getElementById('material-types-fieldset').elements);
   const selectedTypes = materialTypeFilters.filter(type => type.checked);
 
   if (selectedTypes.length > 0) {
@@ -229,7 +229,7 @@ function handleToggleFiltersClick(event) {
   event.preventDefault();
 
   const button = event.target;
-  const filtersDiv = document.getElementById('filters');
+  const filtersDiv = document.getElementById('filters-container');
   
   if (!filtersDiv.style.display) {
     filtersDiv.style.display = 'grid';
@@ -241,7 +241,7 @@ function handleToggleFiltersClick(event) {
 }
 
 function handlePaginationClick(event) {
-  if (event.target.id === 'next-page-btn') {
+  if (event.target.id === 'next-page-button') {
     resultsPage++;
   } else {
     resultsPage--;

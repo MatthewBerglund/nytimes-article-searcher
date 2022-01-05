@@ -102,7 +102,7 @@ button.disabled:hover {
   cursor: pointer;
 }
 
-#search-term {
+#query-input {
   font-family: inherit;
   font-size: 1em;
   height: 40px;
@@ -115,7 +115,7 @@ input[type="checkbox"] {
   height: 1.5em;
 }
 
-#filters {
+#filters-container {
   display: none;
   grid-template:  "newsDesk material" 2fr
                   "location     .   " 1fr / 1fr 2fr;
@@ -124,7 +124,7 @@ input[type="checkbox"] {
   margin-top: 20px;
 }
 
-#newsdesk {
+#newsdesk-fieldset {
   grid-area: newsDesk;
   display: grid;
   grid-auto-flow: column;
@@ -137,7 +137,7 @@ input[type="checkbox"] {
   width: 390px;
 }
 
-#material-types {
+#material-types-fieldset {
   grid-area: material;
   width: 150px;
 }
@@ -157,7 +157,7 @@ fieldset {
   padding: 10px;
 }
 
-#toggle-filters {
+#filters-button {
   align-self: center;
   border: none;
   background: none;
@@ -166,7 +166,7 @@ fieldset {
   padding: 1em;
 }
 
-.search-controls-main {
+#search-controls-container {
   display: flex;
   justify-content: space-between;
   align-self: center;
@@ -178,7 +178,7 @@ fieldset {
   border: 1px solid black;
 }
 
-.sort-controls {
+#sort-by-container {
   display: none;
   align-items: center;
   justify-content: flex-end;
@@ -186,7 +186,7 @@ fieldset {
   margin: 25px 0;
 }
 
-#sort-select {
+#sort-by-select {
   margin-left: 10px;
 }
 
@@ -216,7 +216,7 @@ a:hover {
   text-decoration: underline;
 }
 
-.search-results {
+#search-results-container {
   padding: 0 200px;
 }
 
@@ -247,7 +247,7 @@ a:hover {
   background: #00000005;
 }
 
-.meta-info {
+#total-hits-container {
   justify-self: center;
   margin-top: 25px;
   margin-bottom: 25px;

@@ -14,22 +14,22 @@
   <main>
     <h1>NYT Article Search</h1>
     <form>
-      <div class="search-controls-main">
-        <div class="search-element">
-          <input id="search-term" type="text" placeholder="Enter a search term">
+      <div id="search-controls-container">
+        <div>
+          <input id="query-input" type="search" placeholder="Enter a search term">
         </div>
-        <div class="search-element">
+        <div>
           <label for="begin-date">Start:</label>
           <input id="begin-date" class="date" type="date">
         </div>
-        <div class="search-element">
+        <div>
           <label for="end-date">End:</label>
           <input id="end-date" class="date" type="date">
         </div>
         <button id="submit">Search</button>
       </div>
-      <div id="filters">
-        <fieldset id="newsdesk">
+      <div id="filters-container">
+        <fieldset id="newsdesk-fieldset">
           <legend>News desk:</legend>
           <div>
             <input type="checkbox" id="newsdesk-arts" value="Arts">
@@ -84,7 +84,7 @@
           <label for="location-filter">Location:</label>
           <input type="search" id="location-filter">
         </div>
-        <fieldset id="material-types">
+        <fieldset id="material-types-fieldset">
           <legend>Material type:</legend>
           <div>
             <input type="checkbox" id="material-news" value="News">
@@ -108,21 +108,21 @@
           </div>
         </fieldset>
       </div>
-      <button id="toggle-filters">Show filters</button>
+      <button id="filters-button">Show filters</button>
     </form>
-    <div class="meta-info"></div>
-    <div class="sort-controls">
-      <label for="sort-select">Sort by:</label>
-      <select name="sort" id="sort-select">
+    <div id="total-hits-container"></div>
+    <div id="sort-by-container">
+      <label for="sort-by-select">Sort by:</label>
+      <select name="sort" id="sort-by-select">
         <option value="newest">Newest</option>
         <option value="oldest">Oldest</option>
         <option value="relevance">Relevance</option>
       </select>
     </div>
-    <div class="search-results"></div>
+    <div id="search-results-container"></div>
     <nav>
-      <button id="prev-page-btn"><</button>
-      <button id="next-page-btn">></button>
+      <button id="previous-page-button"><</button>
+      <button id="next-page-button">></button>
     </nav>
   </main>
   <script src="main.js"></script>
