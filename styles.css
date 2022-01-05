@@ -165,6 +165,7 @@ fieldset {
   justify-self: center;
   padding: 1em;
 }
+
 .search-controls-main {
   display: flex;
   justify-content: space-between;

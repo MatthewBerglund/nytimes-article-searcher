@@ -36,6 +36,7 @@ function displayArticles() {
 
       const anchor = document.createElement('a');
       anchor.href = article.web_url;
+      anchor.target = '_blank';
       articleDiv.appendChild(anchor);
 
       const headline = document.createElement('h2');
@@ -47,7 +48,6 @@ function displayArticles() {
       articleDiv.appendChild(abstractPara);
 
       const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
-      
       if (articleImage) {
         const imgEl = document.createElement('img');
         imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
