@@ -158,7 +158,7 @@ async function fetchArticles() {
     filterSubcomponents.push(materialTypeComponent);
   }
 
-  const location = document.getElementById('location-filter').value;
+  const location = document.getElementById('location-search').value;
   if (location) {
     const locationComponent = getLocationURLComponent(location);
     filterSubcomponents.push(locationComponent);
