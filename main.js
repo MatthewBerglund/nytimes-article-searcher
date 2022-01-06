@@ -9,7 +9,10 @@ submitButton.addEventListener('click', event => {
 });
 
 const filtersButton = document.getElementById('filters-button');
-filtersButton.addEventListener('click', handleToggleFiltersClick);
+filtersButton.addEventListener('click', event => {
+	event.preventDefault();
+	toggleFilterMenuVisibility();
+});
 
 const previousPageButton = document.getElementById('previous-page-button');
 previousPageButton.addEventListener('click', handlePaginationClick);
@@ -229,18 +232,15 @@ function getNewsDeskURLComponent(newsDeskArray) {
   return `news_desk:(${filterOptions})`;
 }
 
-function handleToggleFiltersClick(event) {
-  event.preventDefault();
-
-  const button = event.target;
+function toggleFilterMenuVisibility() {
   const filtersDiv = document.getElementById('filters-container');
   
-  if (!filtersDiv.style.display) {
+  if (filtersDiv.style.display === '') {
     filtersDiv.style.display = 'grid';
-    button.textContent = 'Hide filters';
+    filtersButton.textContent = 'Hide filters';
   } else {
     filtersDiv.style.display = '';
-    button.textContent = 'Show filters';
+    filtersButton.textContent = 'Show filters';
   }
 }
 
