@@ -3,8 +3,9 @@ sortSelect.addEventListener('change', submitNewSearch);
 
 const submitButton = document.getElementById('submit');
 submitButton.addEventListener('click', event => {
+  event.preventDefault();
   sortSelect.value = 'relevance';
-  submitNewSearch(event);
+  submitNewSearch();
 });
 
 const filtersButton = document.getElementById('filters-button');
@@ -257,8 +258,7 @@ function handlePaginationClick(event) {
   });
 }
 
-function submitNewSearch(event) {
-  event.preventDefault();
+function submitNewSearch() {
   resultsPage = 0;
   fetchArticles().then(() => {
     updateNavDisplay();
