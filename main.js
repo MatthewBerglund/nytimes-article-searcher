@@ -15,10 +15,28 @@ filtersButton.addEventListener('click', event => {
 });
 
 const previousPageButton = document.getElementById('previous-page-button');
-previousPageButton.addEventListener('click', handlePaginationClick);
+previousPageButton.addEventListener('click', () => {
+	resultsPage--;
+  
+	fetchArticles().then(() => {
+    displayArticles();
+		updateNavDisplay();
+  });
+
+  scroll(0, 0);
+});
 
 const nextPageButton = document.getElementById('next-page-button');
-nextPageButton.addEventListener('click', handlePaginationClick);
+nextPageButton.addEventListener('click', () => {
+	resultsPage++;
+  
+	fetchArticles().then(() => {
+    displayArticles();
+    updateNavDisplay();
+  });
+
+  scroll(0, 0);
+});
 
 let articles;
 let totalHits;
@@ -242,20 +260,6 @@ function toggleFilterMenuVisibility() {
     filtersDiv.style.display = '';
     filtersButton.textContent = 'Show filters';
   }
-}
-
-function handlePaginationClick(event) {
-  if (event.target.id === 'next-page-button') {
-    resultsPage++;
-  } else {
-    resultsPage--;
-  }
-
-  fetchArticles().then(() => {
-    scroll(0, 0);
-    updateNavDisplay();
-    displayArticles();
-  });
 }
 
 function submitNewSearch() {
