@@ -52,15 +52,12 @@ function displayArticles() {
 	const searchResultsDiv = document.getElementById('search-results-container');
   const articlesDiv = document.getElementById('articles-container');
 	
-	// Hide search-results-container
-	// This hides the sort controls, articles and pagination nav
 	searchResultsDiv.style.display = '';
   
   while (articlesDiv.firstChild) {
     articlesDiv.removeChild(articlesDiv.firstChild);
   }
 	
-  // const articlesOnPage = articles.response.docs;
   const totalHits = articles.response.meta.hits;
   const totalHitsPara = document.getElementById('total-hits-msg');
   totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
@@ -111,7 +108,6 @@ function displayArticles() {
       articlesDiv.appendChild(articleDiv);
     });
 		
-		// Display sort-by controls and pagination nav
 		searchResultsDiv.style.display = 'block';
 		updatePaginationNav(currentPageArticles.length);
   }
