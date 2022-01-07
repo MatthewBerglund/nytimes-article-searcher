@@ -131,12 +131,6 @@ function updatePaginationNav(numArticlesOnPage) {
   }
 }
 
-function displayTotalHits() {
-  const totalHitsPara = document.getElementById(total-hits-msg);
-  totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
-  totalHitsPara.style.display = 'block';
-}
-
 async function fetchArticles() {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
