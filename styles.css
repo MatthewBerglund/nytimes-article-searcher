@@ -162,7 +162,7 @@ select:hover {
 }
 
 #sort-by-container {
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: flex-end;
   padding: 0 200px;
@@ -217,13 +217,17 @@ select:hover {
 }
 
 #search-results-container {
+  display: none;
+}
+
+#articles-container {
   padding: 0 200px;
 }
 
 /* Pagination controls */
 
 nav {
-  display: none;
+  display: flex;
   justify-content: space-between;
   margin-bottom: 25px;
   padding: 0 200px;

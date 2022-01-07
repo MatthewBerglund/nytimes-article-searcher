@@ -110,20 +110,24 @@
       </div>
       <button id="filters-button">Show filters</button>
     </form>
-    <div id="total-hits-container"></div>
-    <div id="sort-by-container">
-      <label for="sort-by-select">Sort by:</label>
-      <select name="sort" id="sort-by-select">
-        <option value="newest">Newest</option>
-        <option value="oldest">Oldest</option>
-        <option value="relevance">Relevance</option>
-      </select>
+    <div id="total-hits-container">
+      <p id="total-hits-msg"></p>
     </div>
-    <div id="search-results-container"></div>
-    <nav>
-      <button id="previous-page-button"><</button>
-      <button id="next-page-button">></button>
-    </nav>
+    <div id="search-results-container">
+      <div id="sort-by-container">
+        <label for="sort-by-select">Sort by:</label>
+        <select name="sort" id="sort-by-select">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="relevance">Relevance</option>
+        </select>
+      </div>
+      <div id="articles-container"></div>
+      <nav>
+        <button id="previous-page-button"><</button>
+        <button id="next-page-button">></button>
+      </nav>
+    </div>
   </main>
   <script src="main.js"></script>
 </body>
