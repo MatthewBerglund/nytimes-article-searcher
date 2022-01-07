@@ -13,7 +13,7 @@ function bindEvents() {
 	sortSelect.addEventListener('change', () => {
 		resultsPage = 0;
 		fetchArticles().then(() => {
-			displayArticles();
+			displaySearchResults();
 		});
 	});
 
@@ -22,7 +22,7 @@ function bindEvents() {
 		resultsPage = 0;
 		sortSelect.value = 'relevance';
 		fetchArticles().then(() => {
-			displayArticles();
+			displaySearchResults();
 		});
 	});
 	
@@ -34,7 +34,7 @@ function bindEvents() {
 	previousPageButton.addEventListener('click', () => {
 		resultsPage--;
 		fetchArticles().then(() => {
-			displayArticles();
+			displaySearchResults();
 		});
 		scroll(0, 0);
 	});
@@ -42,13 +42,13 @@ function bindEvents() {
 	nextPageButton.addEventListener('click', () => {
 		resultsPage++;
 		fetchArticles().then(() => {
-			displayArticles();
+			displaySearchResults();
 		});
 		scroll(0, 0);
 	});
 }
 
-function displayArticles() {
+function displaySearchResults() {
 	const searchResultsDiv = document.getElementById('search-results-container');
   const articlesDiv = document.getElementById('articles-container');
 	
@@ -108,26 +108,23 @@ function displayArticles() {
       articlesDiv.appendChild(articleDiv);
     });
 		
-		searchResultsDiv.style.display = 'block';
-		updatePaginationNav(currentPageArticles.length);
-  }
-}
+    if (resultsPage === 0) {
+      previousPageButton.disabled = true;
+      previousPageButton.classList.add('disabled');
+    } else {
+      previousPageButton.disabled = false;
+      previousPageButton.classList.remove('disabled');
+    }
+      
+    if (currentPageArticles.length < 10) {
+      nextPageButton.disabled = true;
+      nextPageButton.classList.add('disabled');
+    } else {
+      nextPageButton.disabled = false;
+      nextPageButton.classList.remove('disabled');
+    }
 
-function updatePaginationNav(numArticlesOnPage) {
-  if (resultsPage === 0) {
-    previousPageButton.disabled = true;
-    previousPageButton.classList.add('disabled');
-  } else {
-    previousPageButton.disabled = false;
-    previousPageButton.classList.remove('disabled');
-  }
-    
-  if (numArticlesOnPage < 10) {
-    nextPageButton.disabled = true;
-    nextPageButton.classList.add('disabled');
-  } else {
-    nextPageButton.disabled = false;
-    nextPageButton.classList.remove('disabled');
+		searchResultsDiv.style.display = 'block';
   }
 }
 
