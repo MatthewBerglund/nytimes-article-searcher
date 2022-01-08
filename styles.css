@@ -171,7 +171,7 @@ select:hover {
 
 /* Search results */
 
-.article-container {
+article {
   display: grid;
   grid-template:  "headline headline"
                   "image ."

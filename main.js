@@ -67,14 +67,13 @@ function displaySearchResults() {
     const currentPageArticles = articles.response.docs;
 
     currentPageArticles.forEach(article => {
-      const articleDiv = document.createElement('div');
-      articleDiv.setAttribute('class', 'article-container');
+      const articleContainer = document.createElement('article');
 
       const anchor = document.createElement('a');
       anchor.href = article.web_url;
       anchor.target = '_blank';
       anchor.setAttribute('class', 'headline-link');
-      articleDiv.appendChild(anchor);
+      articleContainer.appendChild(anchor);
 
       const headline = document.createElement('h2');
       headline.textContent = article.headline.main;
@@ -83,20 +82,20 @@ function displaySearchResults() {
       const abstractPara = document.createElement('p');
       abstractPara.textContent = article.abstract;
       abstractPara.setAttribute('class', 'article-abstract');
-      articleDiv.appendChild(abstractPara);
+      articleContainer.appendChild(abstractPara);
 
       const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
       if (articleImage) {
         const imgEl = document.createElement('img');
         imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
         imgEl.setAttribute('class', 'article-img');
-        articleDiv.appendChild(imgEl);
+        articleContainer.appendChild(imgEl);
       }
 
       const keywordsPara = document.createElement('p');
       keywordsPara.setAttribute('class', 'keywords');
       keywordsPara.textContent = 'Keywords: ';
-      articleDiv.appendChild(keywordsPara);
+      articleContainer.appendChild(keywordsPara);
 
       article.keywords.forEach(keyword => {
         const keywordSpan = document.createElement('span');
@@ -105,7 +104,7 @@ function displaySearchResults() {
         keywordsPara.appendChild(keywordSpan);
       });
 
-      articlesDiv.appendChild(articleDiv);
+      articlesDiv.appendChild(articleContainer);
     });
 		
     if (resultsPage === 0) {
