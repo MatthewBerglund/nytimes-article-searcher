@@ -182,7 +182,6 @@ async function fetchArticles() {
 
   const response = await fetch(fullURL);
   articles = await response.json();
-  totalHits = articles.response.meta.hits;
 }
 
 function getFilterURLComponent(subcomponentArray) {
