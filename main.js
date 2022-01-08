@@ -152,92 +152,58 @@ async function fetchArticles() {
   if (sortByValue) {
     fullURL += `&sort=${sortByValue}`;
   }
-
-  let filterSubcomponents = [];
-  const newsDeskFilters = Array.from(document.getElementById('newsdesk-fieldset').elements);
-  const selectedNewsDesks = newsDeskFilters.filter(newsDesk => newsDesk.checked);
-
-  if (selectedNewsDesks.length > 0) {
-    const newsDeskComponent = getNewsDeskURLComponent(selectedNewsDesks);
-    filterSubcomponents.push(newsDeskComponent);
-  }
-
-  const materialTypeFilters = Array.from(document.getElementById('material-types-fieldset').elements);
-  const selectedTypes = materialTypeFilters.filter(type => type.checked);
-
-  if (selectedTypes.length > 0) {
-    const materialTypeComponent = getMaterialTypeURLComponent(selectedTypes);
-    filterSubcomponents.push(materialTypeComponent);
-  }
-
-  const location = document.getElementById('location-search').value;
-  if (location) {
-    const locationComponent = getLocationURLComponent(location);
-    filterSubcomponents.push(locationComponent);
-  }
-
-  if (filterSubcomponents.length > 0) {
-    fullURL += getFilterURLComponent(filterSubcomponents);
+	
+	const queryFilters = getFilterValuesForURL();
+  if (queryFilters.length > 0) {
+    fullURL += `&fq=${queryFilters}`;
   }
 
   const response = await fetch(fullURL);
   articles = await response.json();
 }
 
-function getFilterURLComponent(subcomponentArray) {
-  let urlComponent = '&fq=';
+function getFilterValuesForURL() {
+	let filterValues = [];
+	
+	const valuesFromFieldset = (fieldset) => {
+		const elements = Array.from(fieldset.elements);
+		const selectedElements = elements.filter(element => element.checked);
+		
+		if (selectedElements.length > 0) {
+			let values = '';
+			for (let i = 0; i < selectedElements.length; i++) {
+				let currentValue = selectedElements[i].value;
+				if (i === 0) {
+					values += `"${currentValue}"`;
+				} else {
+					values += ` "${currentValue}"`;
+				}
+			}
+			return encodeURIComponent(values);
+		}
+	}
 
-  for (let i = 0; i < subcomponentArray.length; i++) {
-    let currentSubcomponent = subcomponentArray[i];
-    if (i === 0) {
-      urlComponent += currentSubcomponent;
-    } else {
-      urlComponent += ` AND ${currentSubcomponent}`;
-    }
+	const newsDeskFilters = document.getElementById('newsdesk-fieldset');
+	const newsDeskValues = valuesFromFieldset(newsDeskFilters);
+
+  if (newsDeskValues) {
+    filterValues.push(`news_desk:(${newsDeskValues})`);
   }
 
-  return urlComponent;
-}
+  const materialTypeFilters = document.getElementById('material-types-fieldset');
+  const materialTypeValues = valuesFromFieldset(materialTypeFilters);
 
-function getLocationURLComponent(locationString) {
-  locationString.trim();
-  locationString = encodeURIComponent(`"${locationString}"`);
-  return `glocations:(${locationString})`;
-}
-
-function getMaterialTypeURLComponent(typesArray) {
-  let filterOptions = '';
-
-  for (let i = 0; i < typesArray.length; i++) {
-    let currentType = typesArray[i].value;
-    
-    if (i === 0) {
-      filterOptions += `"${currentType}"`;
-    } else {
-      filterOptions += ` "${currentType}"`;
-    }
+  if (materialTypeValues) {
+    filterValues.push(`type_of_material:(${materialTypeValues})`);
   }
 
-  filterOptions = encodeURIComponent(filterOptions);
-  return `type_of_material:(${filterOptions})`;
-}
-
-function getNewsDeskURLComponent(array) {
-  const selectedNewsDesks = array;
-  let filterOptions = '';
-
-  for (let i = 0; i < selectedNewsDesks.length; i++) {
-    let currentNewsDesk = selectedNewsDesks[i].value;
-    
-    if (i === 0) {
-      filterOptions += `"${currentNewsDesk}"`;
-    } else {
-      filterOptions += ` "${currentNewsDesk}"`;
-    }
+  let location = document.getElementById('location-search').value.trim();
+  if (location) {
+    location = encodeURIComponent(`"${location}"`);
+    filterValues.push(location);
   }
-
-  filterOptions = encodeURIComponent(filterOptions);
-  return `news_desk:(${filterOptions})`;
+	
+	return filterValues;
 }
 
 function toggleFilterMenuVisibility() {
