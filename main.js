@@ -133,7 +133,7 @@ async function fetchArticles() {
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
   let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
   
-  const query = document.getElementById('query-input').value;
+  const query = document.getElementById('query-input').value.trim();
   if (query) {
     fullURL += `&q=${query}`;
   }
@@ -223,11 +223,12 @@ function getMaterialTypeURLComponent(typesArray) {
   return `type_of_material:(${filterOptions})`;
 }
 
-function getNewsDeskURLComponent(newsDeskArray) {
+function getNewsDeskURLComponent(array) {
+  const selectedNewsDesks = array;
   let filterOptions = '';
 
-  for (let i = 0; i < newsDeskArray.length; i++) {
-    let currentNewsDesk = newsDeskArray[i].value;
+  for (let i = 0; i < selectedNewsDesks.length; i++) {
+    let currentNewsDesk = selectedNewsDesks[i].value;
     
     if (i === 0) {
       filterOptions += `"${currentNewsDesk}"`;
