@@ -152,9 +152,21 @@ async function fetchArticles() {
     fullURL += `&sort=${sortByValue}`;
   }
 	
-	const queryFilters = getFilterValuesForURL();
+  const queryFilters = getFilterValuesForURL();
   if (queryFilters.length > 0) {
-    fullURL += `&fq=${queryFilters}`;
+    fullURL += '&fq=';
+    
+    // Desired output:
+    // &fq=filter1() AND filter2() AND filter3()
+    for (let i = 0; i < queryFilters.length; i++) {
+      const currentFilter = queryFilters[i];
+      if (i === 0) {
+        fullURL += currentFilter;
+      } else {
+        fullURL += ` AND ${currentFilter}`;
+      }
+    }
+    // fullURL += `&fq=${queryFilters}`;
   }
 
   const response = await fetch(fullURL);
@@ -197,9 +209,10 @@ function getFilterValuesForURL() {
   }
 
   let location = document.getElementById('location-search').value.trim();
+  
   if (location) {
     location = encodeURIComponent(`"${location}"`);
-    filterValues.push(location);
+    filterValues.push(`glocations:(${location})`);
   }
 	
 	return filterValues;
