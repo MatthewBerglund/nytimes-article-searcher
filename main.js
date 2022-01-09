@@ -197,7 +197,7 @@ function getFilterValuesForURL() {
   
   if (location) {
     location = encodeURIComponent(`"${location}"`);
-    filterValues.push(`glocations:(${location})`);
+    filterValues.push(`glocations.contains:(${location})`);
   }
 	
 	return filterValues;
