@@ -156,8 +156,6 @@ async function fetchArticles() {
   if (queryFilters.length > 0) {
     fullURL += '&fq=';
     
-    // Desired output:
-    // &fq=filter1() AND filter2() AND filter3()
     for (let i = 0; i < queryFilters.length; i++) {
       const currentFilter = queryFilters[i];
       if (i === 0) {
@@ -166,7 +164,6 @@ async function fetchArticles() {
         fullURL += ` AND ${currentFilter}`;
       }
     }
-    // fullURL += `&fq=${queryFilters}`;
   }
 
   const response = await fetch(fullURL);
