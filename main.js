@@ -133,31 +133,37 @@ async function fetchArticles() {
   let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
   
   const query = document.getElementById('query-input').value.trim();
+  
   if (query) {
     fullURL += `&q=${query}`;
   }
 
   const beginDate = document.getElementById('begin-date').value;
+  
   if (beginDate) {
     fullURL += `&begin_date=${beginDate}`;
   }
   
   const endDate = document.getElementById('end-date').value;
+  
   if (endDate) {
     fullURL += `&end_date=${endDate}`;
   }
 
   const sortByValue = sortSelect.value;
+  
   if (sortByValue) {
     fullURL += `&sort=${sortByValue}`;
   }
 	
   const queryFilters = getFilterValuesForURL();
+  
   if (queryFilters.length > 0) {
     fullURL += '&fq=';
     
     for (let i = 0; i < queryFilters.length; i++) {
       const currentFilter = queryFilters[i];
+      
       if (i === 0) {
         fullURL += currentFilter;
       } else {
@@ -175,14 +181,14 @@ function getFilterValuesForURL() {
 
 	const newsDeskFilters = document.getElementById('newsdesk-fieldset');
 	const newsDeskValues = valuesFromFieldset(newsDeskFilters);
-
+  
   if (newsDeskValues) {
     filterValues.push(`news_desk:(${newsDeskValues})`);
   }
 
   const materialTypeFilters = document.getElementById('material-types-fieldset');
   const materialTypeValues = valuesFromFieldset(materialTypeFilters);
-
+  
   if (materialTypeValues) {
     filterValues.push(`type_of_material:(${materialTypeValues})`);
   }
