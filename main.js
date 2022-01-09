@@ -175,24 +175,6 @@ async function fetchArticles() {
 
 function getFilterValuesForURL() {
 	let filterValues = [];
-	
-	const valuesFromFieldset = (fieldset) => {
-		const elements = Array.from(fieldset.elements);
-		const selectedElements = elements.filter(element => element.checked);
-		
-		if (selectedElements.length > 0) {
-			let values = '';
-			for (let i = 0; i < selectedElements.length; i++) {
-				let currentValue = selectedElements[i].value;
-				if (i === 0) {
-					values += `"${currentValue}"`;
-				} else {
-					values += ` "${currentValue}"`;
-				}
-			}
-			return encodeURIComponent(values);
-		}
-	}
 
 	const newsDeskFilters = document.getElementById('newsdesk-fieldset');
 	const newsDeskValues = valuesFromFieldset(newsDeskFilters);
@@ -227,5 +209,26 @@ function toggleFilterMenuVisibility() {
   } else {
     filtersDiv.style.display = '';
     filtersButton.textContent = 'Show filters';
+  }
+}
+
+function valuesFromFieldset(fieldset) {
+  const elements = Array.from(fieldset.elements);
+  const selectedElements = elements.filter(element => element.checked);
+  
+  if (selectedElements.length > 0) {
+    let values = '';
+    
+    for (let i = 0; i < selectedElements.length; i++) {
+      let currentValue = selectedElements[i].value;
+      
+      if (i === 0) {
+        values += `"${currentValue}"`;
+      } else {
+        values += ` "${currentValue}"`;
+      }
+    }
+
+    return encodeURIComponent(values);
   }
 }
