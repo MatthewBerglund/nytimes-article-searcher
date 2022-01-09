@@ -11,10 +11,10 @@ html {
 }
 
 h1 {
+  align-self: center;
   font-family: 'Vollkorn', serif;
   font-weight: 400;
   margin: 25px auto;
-  align-self: center;
   text-align: center;
 }
 
@@ -32,43 +32,43 @@ main {
 /* Buttons */
 
 button {
-  font: inherit;
   background: #ffc400b4;
-  border: 1px solid #ffc400;
   border-radius: 5px;
+  border: 1px solid #ffc400;
+  font: inherit;
   padding: 8px 13px;
 }
 
 button:hover {
-  cursor: pointer;
   background: #ffc400;
+  cursor: pointer;
 }
 
 .disabled:hover {
-  cursor: default;
   background: #ffc400b4;
+  cursor: default;
 }
 
 /* Search form */
 
 form {
-  border: 1px solid #d6d6d6;
   border-radius: 5px;
+  border: 1px solid #d6d6d6;
   display: grid;
   grid-template-rows: 70px auto;
-  row-gap: 10px;
   justify-self: center;
-  width: 900px;
   padding: 10px 15px;
+  row-gap: 10px;
+  width: 900px;
 }
 
 input {
-  font: inherit;
-  border: 1px solid #d6d6d6;
   border-radius: 5px;
+  border: 1px solid #d6d6d6;
+  font: inherit;
+  height: 40px;
   padding: 10px;
   width: 250px;
-  height: 40px;
 }
 
 input[type="date"] {
@@ -76,8 +76,8 @@ input[type="date"] {
 }
 
 input[type="checkbox"] {
-  width: 40px;
   height: 24px;
+  width: 40px;
 }
 
 fieldset {
@@ -87,73 +87,73 @@ fieldset {
 }
 
 .fieldset-option-container {
-  display: flex;
   align-items: center;
+  display: flex;
   margin-bottom: 10px;
 }
 
 #search-controls-container {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
+  display: flex;
   height: 50px;
+  justify-content: space-between;
 }
 
 #filters-button {
-  border: none;
   background: none;
+  border: none;
   font-size: 14px;
   justify-self: center;
   padding: 14px;
 }
 
 #filters-container {
+  align-items: flex-start;
+  column-gap: 15px;
   display: none;
   grid-template: "newsDesk material location";
-  align-items: flex-start;
-  row-gap: 15px;
-  column-gap: 15px;
   margin-top: 20px;
+  row-gap: 15px;
 }
 
 #newsdesk-fieldset {
-  grid-area: newsDesk;
   display: grid;
+  grid-area: newsDesk;
   grid-auto-flow: column;
-  grid-template-rows: repeat(6, 1fr);
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(6, 1fr);
   width: 380px;
 }
 
 #material-types-fieldset {
   grid-area: material;
-  width: 140px;
   row-gap: 10px;
+  width: 140px;
 }
 
 #location-search {
+  display: block;
   height: 40px;
   width: 250px;
-  display: block;
 }
 
 /* Meta info (total hits) */
 
 #total-hits-container {
   justify-self: center;
-  margin-top: 25px;
   margin-bottom: 25px;
+  margin-top: 25px;
 }
 
 /* Sort controls */
 
 select {
-  font: inherit;
-  color: #0061bb;
-  padding: 2px;
   background: none;
   border: none;
+  color: #0061bb;
+  font: inherit;
   margin-left: 10px;
+  padding: 2px;
 }
 
 select:hover {
@@ -162,31 +162,31 @@ select:hover {
 }
 
 #sort-by-container {
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: flex-end;
-  padding: 0 200px;
   margin: 25px 0;
+  padding: 0 200px;
 }
 
 /* Search results */
 
 article {
+  background-color: #00000009;
   display: grid;
   grid-template:  "headline headline"
                   "image ."
                   "abstract abstract"
                   "keywords keywords";
-  row-gap: 15px;
-  background-color: #00000009;
   margin-bottom: 25px;
   padding: 25px;
+  row-gap: 15px;
 }
 
 .headline-link {
   color: black;
-  text-decoration: none;
   grid-area: headline;
+  text-decoration: none;
 }
 
 .headline-link:hover {
@@ -202,18 +202,18 @@ article {
 }
 
 .keywords {
+  align-items: baseline;
   display: flex;
   flex-flow: wrap;
-  align-items: baseline;
   grid-area: keywords;
 }
 
 .keyword {
-  margin: 0 10px 4px 0;
-  border: 1px solid #00000010;
-  border-radius: 2px;
-  padding: 3px;
   background: #00000005;
+  border-radius: 2px;
+  border: 1px solid #00000010;
+  margin: 0 10px 4px 0;
+  padding: 3px;
 }
 
 #search-results-container {
