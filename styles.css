@@ -137,7 +137,7 @@ fieldset {
   width: 250px;
 }
 
-/* Meta info (total hits) */
+/* Loading message */
 
 #loading-msg {
   font-size: 18px;
@@ -147,6 +147,8 @@ fieldset {
   text-align: center;
   visibility: hidden;
 }
+
+/* Meta info (total hits) */
 
 #total-hits-container {
   justify-self: center;
