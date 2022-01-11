@@ -2,7 +2,6 @@ let articles;
 let resultsPage;
 
 const sortSelect = document.getElementById('sort-by-select');
-const submitButton = document.getElementById('submit');
 const filtersButton = document.getElementById('filters-button');
 const previousPageButton = document.getElementById('previous-page-button');
 const nextPageButton = document.getElementById('next-page-button');
@@ -11,20 +10,22 @@ const articlesContainer = document.getElementById('articles-container');
 bindEvents();
 
 function bindEvents() {
-  sortSelect.addEventListener('change', () => {
-    toggleLoading();
-    resultsPage = 0;
-    fetchArticles().then(() => {
-      toggleLoading();
-      displaySearchResults();
-    });
-  });
+  const submitButton = document.getElementById('submit');
 
   submitButton.addEventListener('click', event => {
     event.preventDefault();
     toggleLoading();
     resultsPage = 0;
     sortSelect.value = 'relevance';
+    fetchArticles().then(() => {
+      toggleLoading();
+      displaySearchResults();
+    });
+  });
+  
+  sortSelect.addEventListener('change', () => {
+    toggleLoading();
+    resultsPage = 0;
     fetchArticles().then(() => {
       toggleLoading();
       displaySearchResults();
@@ -75,37 +76,28 @@ function displaySearchResults() {
 
   if (totalHits > 0) {
     const currentPageArticles = articles.response.docs;
+    const articleTemplate = document.querySelector('template');
 
     currentPageArticles.forEach(article => {
-      const articleContainer = document.createElement('article');
-
-      const anchor = document.createElement('a');
+      const templateClone = articleTemplate.content.cloneNode(true); // true = deep clone
+      
+      const anchor = templateClone.querySelector('a');
       anchor.href = article.web_url;
-      anchor.target = '_blank';
-      anchor.setAttribute('class', 'headline-link');
-      articleContainer.appendChild(anchor);
 
-      const headline = document.createElement('h2');
+      const headline = templateClone.querySelector('h2');
       headline.textContent = article.headline.main;
-      anchor.appendChild(headline);
 
-      const abstractPara = document.createElement('p');
+      const abstractPara = templateClone.querySelector('.article-abstract');
       abstractPara.textContent = article.abstract;
-      abstractPara.setAttribute('class', 'article-abstract');
-      articleContainer.appendChild(abstractPara);
 
       const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
+      
       if (articleImage) {
-        const imgEl = document.createElement('img');
+        const imgEl = templateClone.querySelector('img');
         imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
-        imgEl.setAttribute('class', 'article-img');
-        articleContainer.appendChild(imgEl);
       }
 
-      const keywordsPara = document.createElement('p');
-      keywordsPara.setAttribute('class', 'keywords');
-      keywordsPara.textContent = 'Keywords: ';
-      articleContainer.appendChild(keywordsPara);
+      const keywordsPara = templateClone.querySelector('.keywords');
 
       article.keywords.forEach(keyword => {
         const keywordSpan = document.createElement('span');
@@ -114,7 +106,7 @@ function displaySearchResults() {
         keywordsPara.appendChild(keywordSpan);
       });
 
-      articlesContainer.appendChild(articleContainer);
+      articlesContainer.appendChild(templateClone);
     });
 
     if (resultsPage === 0) {
@@ -137,6 +129,87 @@ function displaySearchResults() {
     sortControls.style.display = 'flex';
   }
 }
+
+// function displaySearchResults() {
+//   const searchResultsDiv = document.getElementById('search-results-container');
+//   const sortControls = document.getElementById('sort-by-container');
+
+//   searchResultsDiv.style.display = 'none';
+//   sortControls.style.display = 'none';
+
+//   while (articlesContainer.firstChild) {
+//     articlesContainer.removeChild(articlesContainer.firstChild);
+//   }
+
+//   const totalHits = articles.response.meta.hits;
+//   const totalHitsPara = document.getElementById('total-hits-msg');
+//   totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
+//   totalHitsPara.style.display = 'block';
+
+//   if (totalHits > 0) {
+//     const currentPageArticles = articles.response.docs;
+
+//     currentPageArticles.forEach(article => {
+//       const articleContainer = document.createElement('article');
+
+//       const anchor = document.createElement('a');
+//       anchor.href = article.web_url;
+//       anchor.target = '_blank';
+//       anchor.setAttribute('class', 'headline-link');
+//       articleContainer.appendChild(anchor);
+
+//       const headline = document.createElement('h2');
+//       headline.textContent = article.headline.main;
+//       anchor.appendChild(headline);
+
+//       const abstractPara = document.createElement('p');
+//       abstractPara.textContent = article.abstract;
+//       abstractPara.setAttribute('class', 'article-abstract');
+//       articleContainer.appendChild(abstractPara);
+
+//       const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
+//       if (articleImage) {
+//         const imgEl = document.createElement('img');
+//         imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
+//         imgEl.setAttribute('class', 'article-img');
+//         articleContainer.appendChild(imgEl);
+//       }
+
+//       const keywordsPara = document.createElement('p');
+//       keywordsPara.setAttribute('class', 'keywords');
+//       keywordsPara.textContent = 'Keywords: ';
+//       articleContainer.appendChild(keywordsPara);
+
+//       article.keywords.forEach(keyword => {
+//         const keywordSpan = document.createElement('span');
+//         keywordSpan.setAttribute('class', 'keyword');
+//         keywordSpan.textContent = keyword.value;
+//         keywordsPara.appendChild(keywordSpan);
+//       });
+
+//       articlesContainer.appendChild(articleContainer);
+//     });
+
+//     if (resultsPage === 0) {
+//       previousPageButton.disabled = true;
+//       previousPageButton.classList.add('disabled');
+//     } else {
+//       previousPageButton.disabled = false;
+//       previousPageButton.classList.remove('disabled');
+//     }
+
+//     if (currentPageArticles.length < 10) {
+//       nextPageButton.disabled = true;
+//       nextPageButton.classList.add('disabled');
+//     } else {
+//       nextPageButton.disabled = false;
+//       nextPageButton.classList.remove('disabled');
+//     }
+
+//     searchResultsDiv.style.display = 'block';
+//     sortControls.style.display = 'flex';
+//   }
+// }
 
 async function fetchArticles() {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';

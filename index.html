@@ -124,6 +124,16 @@
     <p id="loading-msg" data-visibility="hidden">Loading...</p>
     <div id="search-results-container">
       <div id="articles-container"></div>
+      <template id="article-template">
+        <article>
+          <a target="blank" class="headline-link">
+            <h2></h2>
+          </a>
+          <p class="article-abstract"></p>
+          <img class="article-img"></img>
+          <p class="keywords">Keywords:</p>
+        </article>
+      </template>
       <nav>
         <button id="previous-page-button"><</button>
         <button id="next-page-button">></button>
