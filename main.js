@@ -11,63 +11,63 @@ const articlesContainer = document.getElementById('articles-container');
 bindEvents();
 
 function bindEvents() {
-	sortSelect.addEventListener('change', () => {
+  sortSelect.addEventListener('change', () => {
     toggleLoading();
-		resultsPage = 0;
-		fetchArticles().then(() => {
+    resultsPage = 0;
+    fetchArticles().then(() => {
       toggleLoading();
-			displaySearchResults();
-		});
-	});
+      displaySearchResults();
+    });
+  });
 
-	submitButton.addEventListener('click', event => {
-		event.preventDefault();
+  submitButton.addEventListener('click', event => {
+    event.preventDefault();
     toggleLoading();
-		resultsPage = 0;
-		sortSelect.value = 'relevance';
-		fetchArticles().then(() => {
+    resultsPage = 0;
+    sortSelect.value = 'relevance';
+    fetchArticles().then(() => {
       toggleLoading();
-			displaySearchResults();
-		});
-	});
-	
-	filtersButton.addEventListener('click', event => {
-		event.preventDefault();
-		toggleFilterMenuVisibility();
-	});
+      displaySearchResults();
+    });
+  });
 
-	previousPageButton.addEventListener('click', () => {
-		toggleLoading();
+  filtersButton.addEventListener('click', event => {
+    event.preventDefault();
+    toggleFilterMenuVisibility();
+  });
+
+  previousPageButton.addEventListener('click', () => {
+    toggleLoading();
     resultsPage--;
-		fetchArticles().then(() => {
+    fetchArticles().then(() => {
       toggleLoading();
-			displaySearchResults();
-		});
-		scroll(0, 0);
-	});
+      displaySearchResults();
+    });
+    scroll(0, 0);
+  });
 
-	nextPageButton.addEventListener('click', () => {
+  nextPageButton.addEventListener('click', () => {
     toggleLoading();
-		resultsPage++;
-		fetchArticles().then(() => {
+    resultsPage++;
+    fetchArticles().then(() => {
       toggleLoading();
-			displaySearchResults();
-		});
-		scroll(0, 0);
-	});
+      displaySearchResults();
+    });
+    scroll(0, 0);
+  });
 }
 
 function displaySearchResults() {
-	const searchResultsDiv = document.getElementById('search-results-container');
+  const searchResultsDiv = document.getElementById('search-results-container');
   const sortControls = document.getElementById('sort-by-container');
-	
-	searchResultsDiv.style.display = 'none';
+
+  searchResultsDiv.style.display = 'none';
   sortControls.style.display = 'none';
-  
+
   while (articlesContainer.firstChild) {
     articlesContainer.removeChild(articlesContainer.firstChild);
   }
-	
+
   const totalHits = articles.response.meta.hits;
   const totalHitsPara = document.getElementById('total-hits-msg');
   totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
@@ -116,7 +116,7 @@ function displaySearchResults() {
 
       articlesContainer.appendChild(articleContainer);
     });
-		
+
     if (resultsPage === 0) {
       previousPageButton.disabled = true;
       previousPageButton.classList.add('disabled');
@@ -124,7 +124,7 @@ function displaySearchResults() {
       previousPageButton.disabled = false;
       previousPageButton.classList.remove('disabled');
     }
-      
+
     if (currentPageArticles.length < 10) {
       nextPageButton.disabled = true;
       nextPageButton.classList.add('disabled');
@@ -133,7 +133,7 @@ function displaySearchResults() {
       nextPageButton.classList.remove('disabled');
     }
 
-		searchResultsDiv.style.display = 'block';
+    searchResultsDiv.style.display = 'block';
     sortControls.style.display = 'flex';
   }
 }
@@ -142,39 +142,39 @@ async function fetchArticles() {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
   let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
-  
+
   const query = document.getElementById('query-input').value.trim();
-  
+
   if (query) {
     fullURL += `&q=${query}`;
   }
 
   const beginDate = document.getElementById('begin-date').value;
-  
+
   if (beginDate) {
     fullURL += `&begin_date=${beginDate}`;
   }
-  
+
   const endDate = document.getElementById('end-date').value;
-  
+
   if (endDate) {
     fullURL += `&end_date=${endDate}`;
   }
 
   const sortByValue = sortSelect.value;
-  
+
   if (sortByValue) {
     fullURL += `&sort=${sortByValue}`;
   }
-	
+
   const queryFilters = getFilterValuesForURL();
-  
+
   if (queryFilters.length > 0) {
     fullURL += '&fq=';
-    
+
     for (let i = 0; i < queryFilters.length; i++) {
       const currentFilter = queryFilters[i];
-      
+
       if (i === 0) {
         fullURL += currentFilter;
       } else {
@@ -188,35 +188,35 @@ async function fetchArticles() {
 }
 
 function getFilterValuesForURL() {
-	let filterValues = [];
+  let filterValues = [];
 
-	const newsDeskFilters = document.getElementById('newsdesk-fieldset');
-	const newsDeskValues = valuesFromFieldset(newsDeskFilters);
-  
+  const newsDeskFilters = document.getElementById('newsdesk-fieldset');
+  const newsDeskValues = valuesFromFieldset(newsDeskFilters);
+
   if (newsDeskValues) {
     filterValues.push(`news_desk:(${newsDeskValues})`);
   }
 
   const materialTypeFilters = document.getElementById('material-types-fieldset');
   const materialTypeValues = valuesFromFieldset(materialTypeFilters);
-  
+
   if (materialTypeValues) {
     filterValues.push(`type_of_material:(${materialTypeValues})`);
   }
 
   let location = document.getElementById('location-search').value.trim();
-  
+
   if (location) {
     location = encodeURIComponent(`"${location}"`);
     filterValues.push(`glocations.contains:(${location})`);
   }
-	
-	return filterValues;
+
+  return filterValues;
 }
 
 function toggleFilterMenuVisibility() {
   const filtersDiv = document.getElementById('filters-container');
-  
+
   if (filtersDiv.style.display === '') {
     filtersDiv.style.display = 'grid';
     filtersButton.textContent = 'Hide filters';
@@ -227,29 +227,29 @@ function toggleFilterMenuVisibility() {
 }
 
 function toggleLoading() {
-	const loadingMsg = document.getElementById('loading-msg');
+  const loadingMsg = document.getElementById('loading-msg');
 
-	if (loadingMsg.dataset.visibility === 'hidden') {
-		loadingMsg.style.visibility = 'visible';
-		articlesContainer.style.opacity = 0.25;
+  if (loadingMsg.dataset.visibility === 'hidden') {
+    loadingMsg.style.visibility = 'visible';
+    articlesContainer.style.opacity = 0.25;
     loadingMsg.dataset.visibility = 'visible';
-	} else {
-		loadingMsg.style.visibility = 'hidden';
-		articlesContainer.style.opacity = 1;
+  } else {
+    loadingMsg.style.visibility = 'hidden';
+    articlesContainer.style.opacity = 1;
     loadingMsg.dataset.visibility = 'hidden';
-	}
+  }
 }
 
 function valuesFromFieldset(fieldset) {
   const elements = Array.from(fieldset.elements);
   const selectedElements = elements.filter(element => element.checked);
-  
+
   if (selectedElements.length > 0) {
     let values = '';
-    
+
     for (let i = 0; i < selectedElements.length; i++) {
       let currentValue = selectedElements[i].value;
-      
+
       if (i === 0) {
         values += `"${currentValue}"`;
       } else {
