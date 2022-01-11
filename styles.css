@@ -139,6 +139,15 @@ fieldset {
 
 /* Meta info (total hits) */
 
+#loading-msg {
+  font-size: 18px;
+  font-weight: bold;
+  justify-self: center;
+  margin-bottom: 20px;
+  text-align: center;
+  visibility: hidden;
+}
+
 #total-hits-container {
   justify-self: center;
   margin-bottom: 25px;
@@ -163,9 +172,9 @@ select:hover {
 
 #sort-by-container {
   align-items: center;
-  display: flex;
+  display: none;
   justify-content: flex-end;
-  margin: 25px 0;
+  margin: 25px 0 10px 0;
   padding: 0 200px;
 }
 

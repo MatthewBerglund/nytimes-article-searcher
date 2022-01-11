@@ -113,15 +113,16 @@
     <div id="total-hits-container">
       <p id="total-hits-msg"></p>
     </div>
+    <div id="sort-by-container">
+      <label for="sort-by-select">Sort by:</label>
+      <select name="sort" id="sort-by-select">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+        <option value="relevance">Relevance</option>
+      </select>
+    </div>
+    <p id="loading-msg" data-visibility="hidden">Loading...</p>
     <div id="search-results-container">
-      <div id="sort-by-container">
-        <label for="sort-by-select">Sort by:</label>
-        <select name="sort" id="sort-by-select">
-          <option value="newest">Newest</option>
-          <option value="oldest">Oldest</option>
-          <option value="relevance">Relevance</option>
-        </select>
-      </div>
       <div id="articles-container"></div>
       <nav>
         <button id="previous-page-button"><</button>

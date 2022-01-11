@@ -6,22 +6,27 @@ const submitButton = document.getElementById('submit');
 const filtersButton = document.getElementById('filters-button');
 const previousPageButton = document.getElementById('previous-page-button');
 const nextPageButton = document.getElementById('next-page-button');
+const articlesContainer = document.getElementById('articles-container');
 
 bindEvents();
 
 function bindEvents() {
 	sortSelect.addEventListener('change', () => {
+    toggleLoading();
 		resultsPage = 0;
 		fetchArticles().then(() => {
+      toggleLoading();
 			displaySearchResults();
 		});
 	});
 
 	submitButton.addEventListener('click', event => {
 		event.preventDefault();
+    toggleLoading();
 		resultsPage = 0;
 		sortSelect.value = 'relevance';
 		fetchArticles().then(() => {
+      toggleLoading();
 			displaySearchResults();
 		});
 	});
@@ -32,16 +37,20 @@ function bindEvents() {
 	});
 
 	previousPageButton.addEventListener('click', () => {
-		resultsPage--;
+		toggleLoading();
+    resultsPage--;
 		fetchArticles().then(() => {
+      toggleLoading();
 			displaySearchResults();
 		});
 		scroll(0, 0);
 	});
 
 	nextPageButton.addEventListener('click', () => {
+    toggleLoading();
 		resultsPage++;
 		fetchArticles().then(() => {
+      toggleLoading();
 			displaySearchResults();
 		});
 		scroll(0, 0);
@@ -50,12 +59,13 @@ function bindEvents() {
 
 function displaySearchResults() {
 	const searchResultsDiv = document.getElementById('search-results-container');
-  const articlesDiv = document.getElementById('articles-container');
+  const sortControls = document.getElementById('sort-by-container');
 	
-	searchResultsDiv.style.display = '';
+	searchResultsDiv.style.display = 'none';
+  sortControls.style.display = 'none';
   
-  while (articlesDiv.firstChild) {
-    articlesDiv.removeChild(articlesDiv.firstChild);
+  while (articlesContainer.firstChild) {
+    articlesContainer.removeChild(articlesContainer.firstChild);
   }
 	
   const totalHits = articles.response.meta.hits;
@@ -104,7 +114,7 @@ function displaySearchResults() {
         keywordsPara.appendChild(keywordSpan);
       });
 
-      articlesDiv.appendChild(articleContainer);
+      articlesContainer.appendChild(articleContainer);
     });
 		
     if (resultsPage === 0) {
@@ -124,6 +134,7 @@ function displaySearchResults() {
     }
 
 		searchResultsDiv.style.display = 'block';
+    sortControls.style.display = 'flex';
   }
 }
 
@@ -213,6 +224,20 @@ function toggleFilterMenuVisibility() {
     filtersDiv.style.display = '';
     filtersButton.textContent = 'Show filters';
   }
+}
+
+function toggleLoading() {
+	const loadingMsg = document.getElementById('loading-msg');
+
+	if (loadingMsg.dataset.visibility === 'hidden') {
+		loadingMsg.style.visibility = 'visible';
+		articlesContainer.style.opacity = 0.25;
+    loadingMsg.dataset.visibility = 'visible';
+	} else {
+		loadingMsg.style.visibility = 'hidden';
+		articlesContainer.style.opacity = 1;
+    loadingMsg.dataset.visibility = 'hidden';
+	}
 }
 
 function valuesFromFieldset(fieldset) {
