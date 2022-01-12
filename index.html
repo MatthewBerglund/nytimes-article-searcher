@@ -14,116 +14,131 @@
   <main>
     <h1>NYT Article Search</h1>
     <form>
-      <div class="search-controls-main">
-        <div class="search-element">
-          <input id="search-term" type="text" placeholder="Enter a search term">
+      <div id="search-controls-container">
+        <div>
+          <input id="query-input" type="search" placeholder="Enter a search term">
         </div>
-        <div class="search-element">
+        <div>
           <label for="begin-date">Start:</label>
-          <input id="begin-date" class="date" type="date">
+          <input id="begin-date" type="date">
         </div>
-        <div class="search-element">
+        <div>
           <label for="end-date">End:</label>
-          <input id="end-date" class="date" type="date">
+          <input id="end-date" type="date">
         </div>
         <button id="submit">Search</button>
       </div>
-      <div id="filters">
-        <fieldset id="newsdesk">
+      <div id="filters-container">
+        <fieldset id="newsdesk-fieldset">
           <legend>News desk:</legend>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-arts" value="Arts">
             <label for="newsdesk-arts">Arts</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-business" value="Business">
             <label for="newsdesk-business">Business</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-culture" value="Culture">
             <label for="newsdesk-culture">Culture</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-financial" value="Financial">
             <label for="newsdesk-financial">Financial</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-food" value="Food">
             <label for="newsdesk-food">Food</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-fashion" value="Fashion & Style">
             <label for="newsdesk-fashion">Fashion & Style</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-health" value="Health & Fitness">
             <label for="newsdesk-health">Health & Fitness</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-home" value="Home & Garden">
             <label for="newsdesk-home">Home & Garden</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-politics" value="Politics">
             <label for="newsdesk-politics">Politics</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-science" value="Science">
             <label for="newsdesk-science">Science</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-sports" value="Sports">
             <label for="newsdesk-sports">Sports</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="newsdesk-travel" value="Travel">
             <label for="newsdesk-travel">Travel</label>
           </div>
         </fieldset>
         <div>
-          <label for="location-filter">Location:</label>
-          <input type="search" id="location-filter">
+          <label for="location-search">Location:</label>
+          <input type="search" id="location-search">
         </div>
-        <fieldset id="material-types">
+        <fieldset id="material-types-fieldset">
           <legend>Material type:</legend>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="material-news" value="News">
             <label for="material-news">News</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="material-interview" value="Interview">
             <label for="material-interview">Interview</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="material-archives" value="Archives">
             <label for="material-archives">Archives</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="material-editorial" value="Editorial">
             <label for="material-editorial">Editorial</label>
           </div>
-          <div>
+          <div class="fieldset-option-container">
             <input type="checkbox" id="material-oped" value="Op-Ed">
             <label for="material-oped">Op-Ed</label>
           </div>
         </fieldset>
       </div>
-      <button id="toggle-filters">Show filters</button>
+      <button id="filters-button">Show filters</button>
     </form>
-    <div class="meta-info"></div>
-    <div class="sort-controls">
-      <label for="sort-select">Sort by:</label>
-      <select name="sort" id="sort-select">
+    <div id="total-hits-container">
+      <p id="total-hits-msg"></p>
+    </div>
+    <div id="sort-by-container">
+      <label for="sort-by-select">Sort by:</label>
+      <select name="sort" id="sort-by-select">
         <option value="newest">Newest</option>
         <option value="oldest">Oldest</option>
         <option value="relevance">Relevance</option>
       </select>
     </div>
-    <div class="search-results"></div>
-    <nav>
-      <button id="prev-page-btn"><</button>
-      <button id="next-page-btn">></button>
-    </nav>
+    <p id="loading-msg" data-visibility="hidden">Loading...</p>
+    <div id="search-results-container">
+      <div id="articles-container"></div>
+      <template>
+        <article>
+          <a target="blank" class="headline-link">
+            <h2></h2>
+          </a>
+          <p class="article-abstract"></p>
+          <img class="article-img"></img>
+          <p class="keywords"><span>Keywords:</span></p>
+        </article>
+      </template>
+      <nav>
+        <button id="previous-page-button"><</button>
+        <button id="next-page-button">></button>
+      </nav>
+    </div>
   </main>
   <script src="main.js"></script>
 </body>

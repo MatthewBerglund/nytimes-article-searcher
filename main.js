@@ -1,63 +1,103 @@
-const sortSelect = document.getElementById('sort-select');
-sortSelect.addEventListener('change', submitNewSearch);
-
-const submitButton = document.getElementById('submit');
-submitButton.addEventListener('click', event => {
-  sortSelect.value = 'relevance';
-  submitNewSearch(event);
-});
-
-const toggleFiltersButton = document.getElementById('toggle-filters');
-toggleFiltersButton.addEventListener('click', handleToggleFiltersClick);
-
-const previousPageButton = document.getElementById('prev-page-btn');
-previousPageButton.addEventListener('click', handlePaginationClick);
-
-const nextPageButton = document.getElementById('next-page-btn');
-nextPageButton.addEventListener('click', handlePaginationClick);
-
 let articles;
-let totalHits;
 let resultsPage;
 
-function displayArticles() {
-  const searchResults = document.querySelector('.search-results');
+const sortSelect = document.getElementById('sort-by-select');
+const filtersButton = document.getElementById('filters-button');
+const previousPageButton = document.getElementById('previous-page-button');
+const nextPageButton = document.getElementById('next-page-button');
+const articlesContainer = document.getElementById('articles-container');
+
+bindEvents();
+
+function bindEvents() {
+  const submitButton = document.getElementById('submit');
+
+  submitButton.addEventListener('click', event => {
+    event.preventDefault();
+    toggleLoading();
+    resultsPage = 0;
+    sortSelect.value = 'relevance';
+    fetchArticles().then(() => {
+      toggleLoading();
+      displaySearchResults();
+    });
+  });
   
-  while (searchResults.firstChild) {
-    searchResults.removeChild(searchResults.firstChild);
+  sortSelect.addEventListener('change', () => {
+    toggleLoading();
+    resultsPage = 0;
+    fetchArticles().then(() => {
+      toggleLoading();
+      displaySearchResults();
+    });
+  });
+
+  filtersButton.addEventListener('click', event => {
+    event.preventDefault();
+    toggleFilterMenuVisibility();
+  });
+
+  previousPageButton.addEventListener('click', () => {
+    toggleLoading();
+    resultsPage--;
+    fetchArticles().then(() => {
+      toggleLoading();
+      displaySearchResults();
+    });
+    scroll(0, 0);
+  });
+
+  nextPageButton.addEventListener('click', () => {
+    toggleLoading();
+    resultsPage++;
+    fetchArticles().then(() => {
+      toggleLoading();
+      displaySearchResults();
+    });
+    scroll(0, 0);
+  });
+}
+
+function displaySearchResults() {
+  const searchResultsDiv = document.getElementById('search-results-container');
+  const sortControls = document.getElementById('sort-by-container');
+
+  searchResultsDiv.style.display = 'none';
+  sortControls.style.display = 'none';
+
+  while (articlesContainer.firstChild) {
+    articlesContainer.removeChild(articlesContainer.firstChild);
   }
 
-  const articlesOnPage = articles.response.docs;
+  const totalHits = articles.response.meta.hits;
+  const totalHitsPara = document.getElementById('total-hits-msg');
+  totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
+  totalHitsPara.style.display = 'block';
 
-  if (articlesOnPage.length > 0) {
-    articlesOnPage.forEach(article => {
-      const articleDiv = document.createElement('div');
-      articleDiv.setAttribute('class', 'article');
+  if (totalHits > 0) {
+    const currentPageArticles = articles.response.docs;
+    const articleTemplate = document.querySelector('template');
 
-      const anchor = document.createElement('a');
+    currentPageArticles.forEach(article => {
+      const articleHTML = articleTemplate.content.cloneNode(true);
+      
+      const anchor = articleHTML.querySelector('a');
       anchor.href = article.web_url;
-      articleDiv.appendChild(anchor);
 
-      const headline = document.createElement('h2');
+      const headline = articleHTML.querySelector('h2');
       headline.textContent = article.headline.main;
-      anchor.appendChild(headline);
 
-      const abstractPara = document.createElement('p');
+      const abstractPara = articleHTML.querySelector('.article-abstract');
       abstractPara.textContent = article.abstract;
-      articleDiv.appendChild(abstractPara);
 
       const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
       
       if (articleImage) {
-        const imgEl = document.createElement('img');
+        const imgEl = articleHTML.querySelector('img');
         imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
-        articleDiv.appendChild(imgEl);
       }
 
-      const keywordsPara = document.createElement('p');
-      keywordsPara.setAttribute('class', 'keywords');
-      keywordsPara.textContent = 'Keywords: ';
-      articleDiv.appendChild(keywordsPara);
+      const keywordsPara = articleHTML.querySelector('.keywords');
 
       article.keywords.forEach(keyword => {
         const keywordSpan = document.createElement('span');
@@ -66,16 +106,9 @@ function displayArticles() {
         keywordsPara.appendChild(keywordSpan);
       });
 
-      searchResults.appendChild(articleDiv);
+      articlesContainer.appendChild(articleHTML);
     });
-  }
-}
 
-function updateNavDisplay() {
-  const nav = document.querySelector('nav');
-  const sortDiv = document.querySelector('.sort-controls');
-
-  if (totalHits > 0) {
     if (resultsPage === 0) {
       previousPageButton.disabled = true;
       previousPageButton.classList.add('disabled');
@@ -83,9 +116,8 @@ function updateNavDisplay() {
       previousPageButton.disabled = false;
       previousPageButton.classList.remove('disabled');
     }
-    
-    const numArticlesOnPage = articles.response.docs.length;
-    if (numArticlesOnPage < 10) {
+
+    if (currentPageArticles.length < 10) {
       nextPageButton.disabled = true;
       nextPageButton.classList.add('disabled');
     } else {
@@ -93,173 +125,110 @@ function updateNavDisplay() {
       nextPageButton.classList.remove('disabled');
     }
 
-    nav.style.display = 'flex';
-    sortDiv.style.display = 'flex';
-  } else {
-    nav.style.display = 'none';
-    sortDiv.style.display = 'none';
+    searchResultsDiv.style.display = 'block';
+    sortControls.style.display = 'flex';
   }
-}
-
-function displayMetaInfo() {
-  const metaInfoDiv = document.querySelector('.meta-info');
-
-  while (metaInfoDiv.firstChild) {
-    metaInfoDiv.removeChild(metaInfoDiv.firstChild);
-  }
-  
-  const totalHitsPara = document.createElement('p');
-  totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
-  metaInfoDiv.appendChild(totalHitsPara);
 }
 
 async function fetchArticles() {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
   let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
-  
-  const query = document.getElementById('search-term').value;
+
+  const query = document.getElementById('query-input').value.trim();
+
   if (query) {
     fullURL += `&q=${query}`;
   }
 
   const beginDate = document.getElementById('begin-date').value;
+
   if (beginDate) {
     fullURL += `&begin_date=${beginDate}`;
   }
-  
+
   const endDate = document.getElementById('end-date').value;
+
   if (endDate) {
     fullURL += `&end_date=${endDate}`;
   }
 
   const sortByValue = sortSelect.value;
+
   if (sortByValue) {
     fullURL += `&sort=${sortByValue}`;
   }
 
-  let filterSubcomponents = [];
-  const newsDeskFilters = Array.from(document.getElementById('newsdesk').elements);
-  const selectedNewsDesks = newsDeskFilters.filter(newsDesk => newsDesk.checked);
+  let queryFilters = getFilterValuesForURL();
 
-  if (selectedNewsDesks.length > 0) {
-    const newsDeskComponent = getNewsDeskURLComponent(selectedNewsDesks);
-    filterSubcomponents.push(newsDeskComponent);
-  }
-
-  const materialTypeFilters = Array.from(document.getElementById('material-types').elements);
-  const selectedTypes = materialTypeFilters.filter(type => type.checked);
-
-  if (selectedTypes.length > 0) {
-    const materialTypeComponent = getMaterialTypeURLComponent(selectedTypes);
-    filterSubcomponents.push(materialTypeComponent);
-  }
-
-  const location = document.getElementById('location-filter').value;
-  if (location) {
-    const locationComponent = getLocationURLComponent(location);
-    filterSubcomponents.push(locationComponent);
-  }
-
-  if (filterSubcomponents.length > 0) {
-    fullURL += getFilterURLComponent(filterSubcomponents);
+  if (queryFilters.length > 0) {
+    queryFilters = queryFilters.join(' AND ');
+    fullURL += `&fq=${queryFilters}`;
   }
 
   const response = await fetch(fullURL);
   articles = await response.json();
-  totalHits = articles.response.meta.hits;
 }
 
-function getFilterURLComponent(subcomponentArray) {
-  let urlComponent = '&fq=';
+function getFilterValuesForURL() {
+  let filterValues = [];
 
-  for (let i = 0; i < subcomponentArray.length; i++) {
-    let currentSubcomponent = subcomponentArray[i];
-    if (i === 0) {
-      urlComponent += currentSubcomponent;
-    } else {
-      urlComponent += ` AND ${currentSubcomponent}`;
-    }
+  const newsDeskFilters = document.getElementById('newsdesk-fieldset');
+  const newsDeskValues = valuesFromFieldset(newsDeskFilters);
+
+  if (newsDeskValues) {
+    filterValues.push(`news_desk:(${newsDeskValues})`);
   }
 
-  return urlComponent;
-}
+  const materialTypeFilters = document.getElementById('material-types-fieldset');
+  const materialTypeValues = valuesFromFieldset(materialTypeFilters);
 
-function getLocationURLComponent(locationString) {
-  locationString.trim();
-  locationString = encodeURIComponent(`"${locationString}"`);
-  return `glocations:(${locationString})`;
-}
-
-function getMaterialTypeURLComponent(typesArray) {
-  let filterOptions = '';
-
-  for (let i = 0; i < typesArray.length; i++) {
-    let currentType = typesArray[i].value;
-    
-    if (i === 0) {
-      filterOptions += `"${currentType}"`;
-    } else {
-      filterOptions += ` "${currentType}"`;
-    }
+  if (materialTypeValues) {
+    filterValues.push(`type_of_material:(${materialTypeValues})`);
   }
 
-  filterOptions = encodeURIComponent(filterOptions);
-  return `type_of_material:(${filterOptions})`;
-}
+  let location = document.getElementById('location-search').value.trim();
 
-function getNewsDeskURLComponent(newsDeskArray) {
-  let filterOptions = '';
-
-  for (let i = 0; i < newsDeskArray.length; i++) {
-    let currentNewsDesk = newsDeskArray[i].value;
-    
-    if (i === 0) {
-      filterOptions += `"${currentNewsDesk}"`;
-    } else {
-      filterOptions += ` "${currentNewsDesk}"`;
-    }
+  if (location) {
+    location = encodeURIComponent(`"${location}"`);
+    filterValues.push(`glocations.contains:(${location})`);
   }
 
-  filterOptions = encodeURIComponent(filterOptions);
-  return `news_desk:(${filterOptions})`;
+  return filterValues;
 }
 
-function handleToggleFiltersClick(event) {
-  event.preventDefault();
+function toggleFilterMenuVisibility() {
+  const filtersDiv = document.getElementById('filters-container');
 
-  const button = event.target;
-  const filtersDiv = document.getElementById('filters');
-  
-  if (!filtersDiv.style.display) {
+  if (filtersDiv.style.display === '') {
     filtersDiv.style.display = 'grid';
-    button.textContent = 'Hide filters';
+    filtersButton.textContent = 'Hide filters';
   } else {
     filtersDiv.style.display = '';
-    button.textContent = 'Show filters';
+    filtersButton.textContent = 'Show filters';
   }
 }
 
-function handlePaginationClick(event) {
-  if (event.target.id === 'next-page-btn') {
-    resultsPage++;
+function toggleLoading() {
+  const loadingMsg = document.getElementById('loading-msg');
+
+  if (loadingMsg.dataset.visibility === 'hidden') {
+    loadingMsg.style.visibility = 'visible';
+    articlesContainer.style.opacity = 0.25;
+    loadingMsg.dataset.visibility = 'visible';
   } else {
-    resultsPage--;
+    loadingMsg.style.visibility = 'hidden';
+    articlesContainer.style.opacity = 1;
+    loadingMsg.dataset.visibility = 'hidden';
   }
-
-  fetchArticles().then(() => {
-    scroll(0, 0);
-    updateNavDisplay();
-    displayArticles();
-  });
 }
 
-function submitNewSearch(event) {
-  event.preventDefault();
-  resultsPage = 0;
-  fetchArticles().then(() => {
-    updateNavDisplay();
-    displayMetaInfo();
-    displayArticles();
-  });
+function valuesFromFieldset(fieldset) {
+  const elements = Array.from(fieldset.elements);
+  const selectedElements = elements.filter(element => element.checked);
+
+  if (selectedElements.length > 0) {
+    let values = selectedElements.map(element => `"${element.value}"`).join(' ');
+    return encodeURIComponent(values);
+  }
 }
