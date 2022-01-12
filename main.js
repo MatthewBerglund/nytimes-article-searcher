@@ -79,7 +79,7 @@ function displaySearchResults() {
     const articleTemplate = document.querySelector('template');
 
     currentPageArticles.forEach(article => {
-      const articleHTML = articleTemplate.content.cloneNode(true); // true = deep clone
+      const articleHTML = articleTemplate.content.cloneNode(true);
       
       const anchor = articleHTML.querySelector('a');
       anchor.href = article.web_url;
