@@ -159,7 +159,7 @@ async function fetchArticles() {
     fullURL += `&sort=${sortByValue}`;
   }
 
-  const queryFilters = getFilterValuesForURL();
+  let queryFilters = getFilterValuesForURL();
 
   if (queryFilters.length > 0) {
     queryFilters = queryFilters.join(' AND ');
@@ -228,18 +228,7 @@ function valuesFromFieldset(fieldset) {
   const selectedElements = elements.filter(element => element.checked);
 
   if (selectedElements.length > 0) {
-    let values = '';
-
-    for (let i = 0; i < selectedElements.length; i++) {
-      let currentValue = selectedElements[i].value;
-
-      if (i === 0) {
-        values += `"${currentValue}"`;
-      } else {
-        values += ` "${currentValue}"`;
-      }
-    }
-
+    let values = selectedElements.map(element => `"${element.value}"`).join(' ');
     return encodeURIComponent(values);
   }
 }
