@@ -162,7 +162,8 @@ async function fetchArticles() {
   const queryFilters = getFilterValuesForURL();
 
   if (queryFilters.length > 0) {
-    fullURL += `&fq=${queryFilters.join(' AND ')}`;
+    queryFilters = queryFilters.join(' AND ');
+    fullURL += `&fq=${queryFilters}`;
   }
 
   const response = await fetch(fullURL);
