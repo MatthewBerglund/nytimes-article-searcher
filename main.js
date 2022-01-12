@@ -79,25 +79,25 @@ function displaySearchResults() {
     const articleTemplate = document.querySelector('template');
 
     currentPageArticles.forEach(article => {
-      const templateClone = articleTemplate.content.cloneNode(true); // true = deep clone
+      const articleHTML = articleTemplate.content.cloneNode(true); // true = deep clone
       
-      const anchor = templateClone.querySelector('a');
+      const anchor = articleHTML.querySelector('a');
       anchor.href = article.web_url;
 
-      const headline = templateClone.querySelector('h2');
+      const headline = articleHTML.querySelector('h2');
       headline.textContent = article.headline.main;
 
-      const abstractPara = templateClone.querySelector('.article-abstract');
+      const abstractPara = articleHTML.querySelector('.article-abstract');
       abstractPara.textContent = article.abstract;
 
       const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
       
       if (articleImage) {
-        const imgEl = templateClone.querySelector('img');
+        const imgEl = articleHTML.querySelector('img');
         imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
       }
 
-      const keywordsPara = templateClone.querySelector('.keywords');
+      const keywordsPara = articleHTML.querySelector('.keywords');
 
       article.keywords.forEach(keyword => {
         const keywordSpan = document.createElement('span');
@@ -106,7 +106,7 @@ function displaySearchResults() {
         keywordsPara.appendChild(keywordSpan);
       });
 
-      articlesContainer.appendChild(templateClone);
+      articlesContainer.appendChild(articleHTML);
     });
 
     if (resultsPage === 0) {
