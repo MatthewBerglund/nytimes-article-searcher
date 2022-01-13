@@ -100,11 +100,12 @@ function displaySearchResults() {
       const keywordsPara = articleHTML.querySelector('.keywords');
 
       article.keywords.forEach(keyword => {
-        const keywordSpan = document.createElement('span');
-        keywordSpan.setAttribute('class', 'keyword');
-        keywordSpan.textContent = keyword.value;
-        keywordsPara.appendChild(keywordSpan);
-      });
+        const keywordLink = document.createElement('a');
+        keywordLink.setAttribute('class', 'keyword');
+        keywordLink.setAttribute('tabindex', '0');
+        keywordLink.textContent = keyword.value;
+        keywordsPara.appendChild(keywordLink);
+      }); 
 
       articlesContainer.appendChild(articleHTML);
     });
