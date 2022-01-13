@@ -3,6 +3,8 @@ let resultsPage;
 
 const sortSelect = document.getElementById('sort-by-select');
 const filtersButton = document.getElementById('filters-button');
+const filterMenu = document.getElementById('filters-container');
+const queryInput = document.getElementById('query-input');
 const previousPageButton = document.getElementById('previous-page-button');
 const nextPageButton = document.getElementById('next-page-button');
 const articlesContainer = document.getElementById('articles-container');
@@ -14,13 +16,7 @@ function bindEvents() {
 
   submitButton.addEventListener('click', event => {
     event.preventDefault();
-    toggleLoading();
-    resultsPage = 0;
-    sortSelect.value = 'relevance';
-    fetchArticles().then(() => {
-      toggleLoading();
-      displaySearchResults();
-    });
+    submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
@@ -104,8 +100,22 @@ function displaySearchResults() {
         keywordLink.setAttribute('class', 'keyword');
         keywordLink.setAttribute('tabindex', '0');
         keywordLink.textContent = keyword.value;
+
+        keywordLink.addEventListener('click', event => {
+          const searchForm = document.querySelector('form');
+          searchForm.reset();
+          
+          if (filterMenu.style.display === 'grid') {
+            toggleFilterMenuVisibility();
+          }
+          
+          queryInput.value = event.target.textContent;
+          submitNewSearch();
+          scroll(0, 0);
+        });
+
         keywordsPara.appendChild(keywordLink);
-      }); 
+      });
 
       articlesContainer.appendChild(articleHTML);
     });
@@ -136,7 +146,7 @@ async function fetchArticles() {
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
   let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
 
-  const query = document.getElementById('query-input').value.trim();
+  const query = queryInput.value.trim();
 
   if (query) {
     fullURL += `&q=${query}`;
@@ -198,14 +208,22 @@ function getFilterValuesForURL() {
   return filterValues;
 }
 
-function toggleFilterMenuVisibility() {
-  const filtersDiv = document.getElementById('filters-container');
+function submitNewSearch() {
+  toggleLoading();
+  resultsPage = 0;
+  sortSelect.value = 'relevance';
+  fetchArticles().then(() => {
+    toggleLoading();
+    displaySearchResults();
+  });
+}
 
-  if (filtersDiv.style.display === '') {
-    filtersDiv.style.display = 'grid';
+function toggleFilterMenuVisibility() {
+  if (filterMenu.style.display === '') {
+    filterMenu.style.display = 'grid';
     filtersButton.textContent = 'Hide filters';
   } else {
-    filtersDiv.style.display = '';
+    filterMenu.style.display = '';
     filtersButton.textContent = 'Show filters';
   }
 }
