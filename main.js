@@ -65,58 +65,14 @@ function displaySearchResults() {
     articlesContainer.removeChild(articlesContainer.firstChild);
   }
 
-  const totalHits = articles.response.meta.hits;
-  const totalHitsPara = document.getElementById('total-hits-msg');
-  totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
-  totalHitsPara.style.display = 'block';
+  const totalHits = articles.response.meta.hits; 
+  displayTotalHits(totalHits);
 
   if (totalHits > 0) {
     const currentPageArticles = articles.response.docs;
-    const articleTemplate = document.querySelector('template');
-
+    
     currentPageArticles.forEach(article => {
-      const articleHTML = articleTemplate.content.cloneNode(true);
-      
-      const anchor = articleHTML.querySelector('a');
-      anchor.href = article.web_url;
-
-      const headline = articleHTML.querySelector('h2');
-      headline.textContent = article.headline.main;
-
-      const abstractPara = articleHTML.querySelector('.article-abstract');
-      abstractPara.textContent = article.abstract;
-
-      const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
-      
-      if (articleImage) {
-        const imgEl = articleHTML.querySelector('img');
-        imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
-      }
-
-      const keywordsPara = articleHTML.querySelector('.keywords');
-
-      article.keywords.forEach(keyword => {
-        const keywordLink = document.createElement('a');
-        keywordLink.setAttribute('class', 'keyword');
-        keywordLink.setAttribute('tabindex', '0');
-        keywordLink.textContent = keyword.value;
-
-        keywordLink.addEventListener('click', event => {
-          const searchForm = document.querySelector('form');
-          searchForm.reset();
-          
-          if (filterMenu.style.display === 'grid') {
-            toggleFilterMenuVisibility();
-          }
-          
-          queryInput.value = event.target.textContent;
-          submitNewSearch();
-          scroll(0, 0);
-        });
-
-        keywordsPara.appendChild(keywordLink);
-      });
-
+      const articleHTML = getArticleHTML(article);
       articlesContainer.appendChild(articleHTML);
     });
 
@@ -127,7 +83,7 @@ function displaySearchResults() {
       previousPageButton.disabled = false;
       previousPageButton.classList.remove('disabled');
     }
-
+  
     if (currentPageArticles.length < 10) {
       nextPageButton.disabled = true;
       nextPageButton.classList.add('disabled');
@@ -135,10 +91,16 @@ function displaySearchResults() {
       nextPageButton.disabled = false;
       nextPageButton.classList.remove('disabled');
     }
-
+    
     searchResultsDiv.style.display = 'block';
     sortControls.style.display = 'flex';
   }
+}
+
+function displayTotalHits(totalHits) {
+  const totalHitsPara = document.getElementById('total-hits-msg');
+  totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
+  totalHitsPara.style.display = 'block';
 }
 
 async function fetchArticles() {
@@ -181,6 +143,37 @@ async function fetchArticles() {
   articles = await response.json();
 }
 
+function getArticleHTML(article) {
+  const articleTemplate = document.querySelector('template');
+  const articleHTML = articleTemplate.content.cloneNode(true);
+
+  const anchor = articleHTML.querySelector('a');
+  anchor.href = article.web_url;
+
+  const headline = articleHTML.querySelector('h2');
+  headline.textContent = article.headline.main;
+
+  const abstractPara = articleHTML.querySelector('.article-abstract');
+  abstractPara.textContent = article.abstract;
+
+  const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
+
+  if (articleImage) {
+    const imgEl = articleHTML.querySelector('img');
+    imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
+  }
+
+  // getKeywordsHTML()
+  const keywordsPara = articleHTML.querySelector('.keywords');
+
+  article.keywords.forEach(keyword => {
+    const keywordLink = getKeywordLink(keyword);
+    keywordsPara.appendChild(keywordLink);
+  });
+
+  return articleHTML;
+}
+
 function getFilterValuesForURL() {
   let filterValues = [];
 
@@ -206,6 +199,28 @@ function getFilterValuesForURL() {
   }
 
   return filterValues;
+}
+
+function getKeywordLink(keyword) {
+  const keywordLink = document.createElement('a');
+  keywordLink.setAttribute('class', 'keyword');
+  keywordLink.setAttribute('tabindex', '0');
+  keywordLink.textContent = keyword.value;
+
+  keywordLink.addEventListener('click', event => {
+    const searchForm = document.querySelector('form');
+    searchForm.reset();
+
+    if (filterMenu.style.display === 'grid') {
+      toggleFilterMenuVisibility();
+    }
+
+    queryInput.value = event.target.textContent;
+    submitNewSearch();
+    scroll(0, 0);
+  });
+
+  return keywordLink;
 }
 
 function submitNewSearch() {
