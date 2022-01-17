@@ -185,13 +185,13 @@ select:hover {
 article {
   background-color: #00000009;
   display: grid;
-  grid-template:  "headline headline"
-                  "image ."
-                  "abstract abstract"
-                  "keywords keywords";
+  grid-template-columns: auto auto;
+	grid-template-rows: repeat(4, auto);
+	grid-template-areas: "headline image" 
+                       "abstract image" 
+                       "keywords keywords";
   margin-bottom: 25px;
   padding: 25px;
-  row-gap: 15px;
 }
 
 span {
@@ -202,6 +202,7 @@ span {
   color: black;
   grid-area: headline;
   text-decoration: none;
+  margin-bottom: 10px;
 }
 
 .headline-link:hover {
@@ -210,6 +211,8 @@ span {
 
 .article-img {
   grid-area: image;
+  justify-self: flex-end;
+  margin-left: 10px;
 }
 
 .article-abstract {
@@ -221,12 +224,14 @@ span {
   display: flex;
   flex-flow: wrap;
   grid-area: keywords;
+  margin-top: 20px;
 }
 
 .keyword {
   background: #00000005;
   border-radius: 2px;
   border: 1px solid #00000010;
+  font-size: 13px;
   margin: 0 10px 10px 0;
   padding: 3px;
   transition: all 0.2s ease;
