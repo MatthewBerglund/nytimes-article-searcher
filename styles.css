@@ -32,20 +32,21 @@ main {
 /* Buttons */
 
 button {
-  background: #ffc400b4;
+  background: #ffb700;
+  border: none;
   border-radius: 5px;
-  border: 1px solid #ffc400;
   font: inherit;
-  padding: 8px 13px;
+  font-weight: bold;
+  padding: 10.5px 20px;
 }
 
 button:hover {
-  background: #ffc400;
+  background: #e0a100;
   cursor: pointer;
 }
 
 .disabled:hover {
-  background: #ffc400b4;
+  background: #ffb700;
   cursor: default;
 }
 
@@ -102,9 +103,15 @@ fieldset {
 #filters-button {
   background: none;
   border: none;
+  color: #0061bb;
   font-size: 14px;
+  font-weight: 400;
   justify-self: center;
   padding: 14px;
+}
+
+#filters-button:hover {
+  text-decoration: underline;
 }
 
 #filters-container {
@@ -199,7 +206,7 @@ span {
 }
 
 .headline-link {
-  color: black;
+  color: #0061bb;
   grid-area: headline;
   text-decoration: none;
 }
@@ -241,8 +248,9 @@ span {
 }
 
 .keyword:hover {
+  color: white;
   cursor: pointer;
-  background: #00000010;
+  background: #36382E;
 }
 
 #search-results-container {
