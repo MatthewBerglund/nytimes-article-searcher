@@ -159,21 +159,30 @@ function getArticleHTML(article) {
   headline.textContent = article.headline.main;
 
   const abstractPara = articleHTML.querySelector('.article-abstract');
-  abstractPara.textContent = article.abstract;
 
+  if (article.abstract) {
+    abstractPara.textContent = article.abstract;
+    abstractPara.style.display = 'block';
+  }
+  
   const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
+  const imgEl = articleHTML.querySelector('img');
 
   if (articleImage) {
-    const imgEl = articleHTML.querySelector('img');
     imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
+    imgEl.style.display = 'block';
   }
 
   const keywordsPara = articleHTML.querySelector('.keywords');
 
-  article.keywords.forEach(keyword => {
-    const keywordLink = getKeywordLink(keyword);
-    keywordsPara.appendChild(keywordLink);
-  });
+  if (article.keywords.length > 0) {
+    article.keywords.forEach(keyword => {
+      const keywordLink = getKeywordLink(keyword);
+      keywordsPara.appendChild(keywordLink);
+    });
+
+    keywordsPara.style.display = 'flex';
+  }
 
   return articleHTML;
 }
