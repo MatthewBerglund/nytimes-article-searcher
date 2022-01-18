@@ -155,19 +155,22 @@ function getArticleHTML(article) {
   const anchor = articleHTML.querySelector('a');
   anchor.href = article.web_url;
 
-  const headline = articleHTML.querySelector('h2');
-  headline.textContent = article.headline.main;
+  const headlineEl = articleHTML.querySelector('h2');
+  headlineEl.textContent = article.headline.main;
 
   const abstractPara = articleHTML.querySelector('.article-abstract');
-  abstractPara.textContent = article.abstract;
 
+  if (article.abstract) {
+    abstractPara.textContent = article.abstract;
+    abstractPara.style.display = 'block';
+  }
+  
   const articleImage = article.multimedia.find(image => image.subtype === 'blog225');
   const imgEl = articleHTML.querySelector('img');
 
   if (articleImage) {
     imgEl.src = `http://www.nytimes.com/${articleImage.url}`;
-  } else {
-    imgEl.style.display = 'none';
+    imgEl.style.display = 'block';
   }
 
   const keywordsPara = articleHTML.querySelector('.keywords');
@@ -177,8 +180,8 @@ function getArticleHTML(article) {
       const keywordLink = getKeywordLink(keyword);
       keywordsPara.appendChild(keywordLink);
     });
-  } else {
-    keywordsPara.style.display = 'none';
+
+    keywordsPara.style.display = 'flex';
   }
 
   return articleHTML;
