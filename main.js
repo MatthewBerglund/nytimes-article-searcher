@@ -155,8 +155,8 @@ function getArticleHTML(article) {
   const anchor = articleHTML.querySelector('a');
   anchor.href = article.web_url;
 
-  const headlineEl = articleHTML.querySelector('h2');
-  headlineEl.textContent = article.headline.main;
+  const headline = articleHTML.querySelector('h2');
+  headline.textContent = article.headline.main;
 
   const abstractPara = articleHTML.querySelector('.article-abstract');
 
