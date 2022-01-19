@@ -5,8 +5,6 @@ const sortSelect = document.getElementById('sort-by-select');
 const filtersButton = document.getElementById('filters-button');
 const filterMenu = document.getElementById('filters-container');
 const queryInput = document.getElementById('query-input');
-const previousPageButton = document.getElementById('previous-page-button');
-const nextPageButton = document.getElementById('next-page-button');
 const articlesContainer = document.getElementById('articles-container');
 
 bindEvents();
@@ -32,46 +30,6 @@ function bindEvents() {
     event.preventDefault();
     toggleFilterMenuVisibility();
   });
-
-  previousPageButton.addEventListener('click', () => {
-    toggleLoading();
-    resultsPage--;
-    fetchArticles().then(() => {
-      toggleLoading();
-      displaySearchResults();
-    });
-    scroll(0, 0);
-  });
-
-  nextPageButton.addEventListener('click', () => {
-    toggleLoading();
-    resultsPage++;
-    fetchArticles().then(() => {
-      toggleLoading();
-      displaySearchResults();
-    });
-    scroll(0, 0);
-  });
-}
-
-function configurePaginationButtons(pageArticles) {
-  const numArticlesOnPage = pageArticles.length;
-  
-  if (numArticlesOnPage < 10) {
-    nextPageButton.disabled = true;
-    nextPageButton.classList.add('disabled');
-  } else {
-    nextPageButton.disabled = false;
-    nextPageButton.classList.remove('disabled');
-  }
-
-  if (resultsPage === 0) {
-    previousPageButton.disabled = true;
-    previousPageButton.classList.add('disabled');
-  } else {
-    previousPageButton.disabled = false;
-    previousPageButton.classList.remove('disabled');
-  }
 }
 
 function displaySearchResults() {
@@ -98,7 +56,6 @@ function displaySearchResults() {
 
     sortControls.style.display = 'flex';
     searchResultsDiv.style.display = 'block';
-    configurePaginationButtons(currentPageArticles);
   }
 }
 

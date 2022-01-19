@@ -260,12 +260,3 @@ span {
 #articles-container {
   padding: 0 200px;
 }
-
-/* Pagination controls */
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 25px;
-  padding: 0 200px;
-}
