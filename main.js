@@ -36,12 +36,12 @@ function displaySearchResults() {
   const searchResultsDiv = document.getElementById('search-results-container');
   const sortControls = document.getElementById('sort-by-container');
 
-  searchResultsDiv.style.display = 'none';
-  sortControls.style.display = 'none';
+  // searchResultsDiv.style.display = 'none';
+  // sortControls.style.display = 'none';
 
-  while (articlesContainer.firstChild) {
-    articlesContainer.removeChild(articlesContainer.firstChild);
-  }
+  // while (articlesContainer.firstChild) {
+  //   articlesContainer.removeChild(articlesContainer.firstChild);
+  // }
 
   const totalHits = articles.response.meta.hits; 
   displayTotalHits(totalHits);
@@ -56,7 +56,32 @@ function displaySearchResults() {
 
     sortControls.style.display = 'flex';
     searchResultsDiv.style.display = 'block';
+
+    // API limits pagination to 1000 articles (100 pages)
+    const totalScrollableHits = totalHits > 1000 ? 1000 : totalHits;
+    const totalScrollablePages = Math.floor(totalScrollableHits / 10);
+    const pageBottom = document.getElementById('page-bottom');
+    
+    // If we haven't reached the last page, create a new intersection observer
+    if (resultsPage !== totalScrollablePages) {
+      const observer = new IntersectionObserver(handleIntersections, { threshold: 1.0 });
+      const target = pageBottom;
+      observer.observe(target);
+    }
   }
+}
+
+function handleIntersections(entries) {
+  entries.forEach(entry => {
+    // if the entry is intersecting right now and it's also the last child of the articles container:
+    if (entry.isIntersecting) {
+      console.log("Reached bottom of page.");
+      resultsPage++;
+      fetchArticles().then(() => {
+        displaySearchResults();
+      });
+    }
+  });
 }
 
 function displayTotalHits(totalHits) {
@@ -198,8 +223,18 @@ function submitNewSearch() {
   resultsPage = 0;
   sortSelect.value = 'relevance';
   fetchArticles().then(() => {
-    toggleLoading();
+    const searchResultsDiv = document.getElementById('search-results-container');
+    const sortControls = document.getElementById('sort-by-container');
+
+    searchResultsDiv.style.display = 'none';
+    sortControls.style.display = 'none';
+
+    while (articlesContainer.firstChild) {
+      articlesContainer.removeChild(articlesContainer.firstChild);
+    }
+
     displaySearchResults();
+    toggleLoading();
   });
 }
 
