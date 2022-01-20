@@ -26,6 +26,7 @@ h2 {
 main {
   display: grid;
   grid-template-rows: 150px auto auto;
+  min-height: 100vh;
   padding: 0 360px;
 }
 
@@ -259,4 +260,44 @@ span {
 
 #articles-container {
   padding: 0 200px;
+}
+
+/* Page bottom intersection */
+
+#page-bottom {
+  align-items: center;
+  display: none;
+  justify-content: center;
+}
+
+/* Placeholder article */
+
+#placeholder-article {
+  height: 300px;
+  width: 719px;
+}
+
+.placeholder {
+  display: block;
+  background-color: #e0e0e0;
+}
+
+.placeholder-headline {
+  height: 50px;
+  width: 420px;
+}
+
+.placeholder-abstract {
+  height: 120px;
+  width: 420px;
+}
+
+.placeholder-img {
+  height: 150px;
+  width: 200px;
+}
+
+.placeholder-keywords {
+  height: 30px;
+  width: auto;
 }

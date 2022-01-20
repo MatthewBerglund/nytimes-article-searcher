@@ -12,6 +12,12 @@ const articlesContainer = document.getElementById('articles-container');
 bindEvents();
 
 function bindEvents() {
+  window.addEventListener('load', () => {
+    const observer = new IntersectionObserver(handleIntersections, {threshold: 0.5});
+    const pageBottom = document.getElementById('page-bottom');
+    observer.observe(pageBottom);
+  });
+  
   const submitButton = document.getElementById('submit');
 
   submitButton.addEventListener('click', event => {
@@ -49,14 +55,15 @@ function displaySearchResults() {
       articlesContainer.appendChild(articleHTML);
     });
 
-    if (resultsPage !== totalScrollablePages) {
-      const observer = new IntersectionObserver(handleIntersections, {threshold: 1.0});
-      const pageBottom = document.getElementById('page-bottom');
-      observer.observe(pageBottom);
-    }
-
+    // if (resultsPage !== totalScrollablePages) {
+    //   const observer = new IntersectionObserver(handleIntersections, {threshold: 1.0});
+    //   const pageBottom = document.getElementById('page-bottom');
+    //   observer.observe(pageBottom);
+    // }
+    
     sortControls.style.display = 'flex';
     searchResultsDiv.style.display = 'block';
+    document.getElementById('page-bottom').style.display = 'flex';
   }
 }
 
