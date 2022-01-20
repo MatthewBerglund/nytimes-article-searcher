@@ -25,7 +25,7 @@ h2 {
 
 main {
   display: grid;
-  grid-template-rows: 150px auto 80px 40px 1fr;
+  grid-template-rows: 150px auto auto auto auto 1fr;
   min-height: 100vh;
   padding: 0 360px;
 }
