@@ -1,10 +1,12 @@
 let articles;
 let resultsPage;
 
+const sortControls = document.getElementById('sort-by-container');
 const sortSelect = document.getElementById('sort-by-select');
-const filtersButton = document.getElementById('filters-button');
 const filterMenu = document.getElementById('filters-container');
+const filtersButton = document.getElementById('filters-button');
 const queryInput = document.getElementById('query-input');
+const searchResultsDiv = document.getElementById('search-results-container');
 const articlesContainer = document.getElementById('articles-container');
 
 bindEvents();
@@ -21,8 +23,8 @@ function bindEvents() {
     toggleLoading();
     resultsPage = 0;
     fetchArticles().then(() => {
-      toggleLoading();
       displaySearchResults();
+      toggleLoading();
     });
   });
 
@@ -33,16 +35,6 @@ function bindEvents() {
 }
 
 function displaySearchResults() {
-  const searchResultsDiv = document.getElementById('search-results-container');
-  const sortControls = document.getElementById('sort-by-container');
-
-  // searchResultsDiv.style.display = 'none';
-  // sortControls.style.display = 'none';
-
-  // while (articlesContainer.firstChild) {
-  //   articlesContainer.removeChild(articlesContainer.firstChild);
-  // }
-
   const totalHits = articles.response.meta.hits; 
   displayTotalHits(totalHits);
 
@@ -218,9 +210,6 @@ function submitNewSearch() {
   resultsPage = 0;
   sortSelect.value = 'relevance';
   fetchArticles().then(() => {
-    const searchResultsDiv = document.getElementById('search-results-container');
-    const sortControls = document.getElementById('sort-by-container');
-
     searchResultsDiv.style.display = 'none';
     sortControls.style.display = 'none';
 
