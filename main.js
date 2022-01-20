@@ -22,14 +22,14 @@ function bindEvents() {
 
   submitButton.addEventListener('click', event => {
     event.preventDefault();
+    sortSelect.value = 'relevance';
     submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
     toggleLoading();
-    resultsPage = 0;
     fetchArticles().then(() => {
-      displaySearchResults();
+      submitNewSearch();
       toggleLoading();
     });
   });
@@ -193,6 +193,7 @@ function getKeywordLink(keyword) {
     }
 
     queryInput.value = event.target.textContent;
+    sortSelect.value = 'relevance';
     submitNewSearch();
     scroll(0, 0);
   });
@@ -217,7 +218,6 @@ function handleIntersections(entries) {
 function submitNewSearch() {
   toggleLoading();
   resultsPage = 0;
-  sortSelect.value = 'relevance';
   
   fetchArticles().then(() => {
     searchResultsDiv.style.display = 'none';
