@@ -55,7 +55,9 @@ function displaySearchResults() {
       articlesContainer.appendChild(articleHTML);
     });
 
-    if (resultsPage !== totalScrollablePages) {
+    if (resultsPage === totalScrollablePages) {
+      pageBottom.style.display = 'none';
+    } else {
       pageBottom.style.display = 'flex';
     }
     
@@ -213,9 +215,11 @@ function submitNewSearch() {
   toggleLoading();
   resultsPage = 0;
   sortSelect.value = 'relevance';
+  
   fetchArticles().then(() => {
     searchResultsDiv.style.display = 'none';
     sortControls.style.display = 'none';
+    pageBottom.style.display = 'none';
 
     while (articlesContainer.firstChild) {
       articlesContainer.removeChild(articlesContainer.firstChild);
