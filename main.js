@@ -47,6 +47,9 @@ function displaySearchResults() {
   displayTotalHits(totalHits);
 
   if (totalHits > 0) {
+    // API limits pagination to 1000 articles (100 pages)
+    const totalScrollableHits = totalHits > 1000 ? 1000 : totalHits;
+    const totalScrollablePages = Math.floor(totalScrollableHits / 10);
     const currentPageArticles = articles.response.docs;
     
     currentPageArticles.forEach(article => {
@@ -54,34 +57,15 @@ function displaySearchResults() {
       articlesContainer.appendChild(articleHTML);
     });
 
+    if (resultsPage !== totalScrollablePages) {
+      const observer = new IntersectionObserver(handleIntersections, {threshold: 1.0});
+      const pageBottom = document.getElementById('page-bottom');
+      observer.observe(pageBottom);
+    }
+
     sortControls.style.display = 'flex';
     searchResultsDiv.style.display = 'block';
-
-    // API limits pagination to 1000 articles (100 pages)
-    const totalScrollableHits = totalHits > 1000 ? 1000 : totalHits;
-    const totalScrollablePages = Math.floor(totalScrollableHits / 10);
-    const pageBottom = document.getElementById('page-bottom');
-    
-    // If we haven't reached the last page, create a new intersection observer
-    if (resultsPage !== totalScrollablePages) {
-      const observer = new IntersectionObserver(handleIntersections, { threshold: 1.0 });
-      const target = pageBottom;
-      observer.observe(target);
-    }
   }
-}
-
-function handleIntersections(entries) {
-  entries.forEach(entry => {
-    // if the entry is intersecting right now and it's also the last child of the articles container:
-    if (entry.isIntersecting) {
-      console.log("Reached bottom of page.");
-      resultsPage++;
-      fetchArticles().then(() => {
-        displaySearchResults();
-      });
-    }
-  });
 }
 
 function displayTotalHits(totalHits) {
@@ -216,6 +200,17 @@ function getKeywordLink(keyword) {
   });
 
   return keywordLink;
+}
+
+function handleIntersections(entries) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      resultsPage++;
+      fetchArticles().then(() => {
+        displaySearchResults();
+      });
+    }
+  });
 }
 
 function submitNewSearch() {
