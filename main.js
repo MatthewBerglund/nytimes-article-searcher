@@ -8,14 +8,14 @@ const filtersButton = document.getElementById('filters-button');
 const queryInput = document.getElementById('query-input');
 const searchResultsDiv = document.getElementById('search-results-container');
 const articlesContainer = document.getElementById('articles-container');
+const pageBottom = document.getElementById('page-bottom');
 
 bindEvents();
 
 function bindEvents() {
   window.addEventListener('load', () => {
-    const observer = new IntersectionObserver(handleIntersections, {threshold: 0.5});
-    const pageBottom = document.getElementById('page-bottom');
-    observer.observe(pageBottom);
+    const viewPortObserver = new IntersectionObserver(handleIntersections, {threshold: 0.5});
+    viewPortObserver.observe(pageBottom);
   });
   
   const submitButton = document.getElementById('submit');
@@ -55,15 +55,12 @@ function displaySearchResults() {
       articlesContainer.appendChild(articleHTML);
     });
 
-    // if (resultsPage !== totalScrollablePages) {
-    //   const observer = new IntersectionObserver(handleIntersections, {threshold: 1.0});
-    //   const pageBottom = document.getElementById('page-bottom');
-    //   observer.observe(pageBottom);
-    // }
+    if (resultsPage !== totalScrollablePages) {
+      pageBottom.style.display = 'flex';
+    }
     
     sortControls.style.display = 'flex';
     searchResultsDiv.style.display = 'block';
-    document.getElementById('page-bottom').style.display = 'flex';
   }
 }
 
