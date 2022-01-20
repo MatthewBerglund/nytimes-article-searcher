@@ -203,9 +203,12 @@ function getKeywordLink(keyword) {
 function handleIntersections(entries) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
+      pageBottom.style.visibility = 'visible';
       resultsPage++;
+      
       fetchArticles().then(() => {
         displaySearchResults();
+        pageBottom.style.visibility = 'hidden';
       });
     }
   });
