@@ -33,7 +33,7 @@ function bindEvents() {
     toggleFilterMenuVisibility();
   });
 
-  const viewPortObserver = new IntersectionObserver(handleIntersections, { threshold: 0.5 });
+  const viewPortObserver = new IntersectionObserver(handleIntersections, { threshold: 0.1 });
   viewPortObserver.observe(pageBottom); 
 }
 
