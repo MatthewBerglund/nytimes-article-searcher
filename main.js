@@ -43,7 +43,7 @@ function displaySearchResults() {
 
   if (totalHits > 0) {
     // API limits pagination to 1000 articles (100 pages)
-    const totalScrollableHits = totalHits > 1000 ? 1000 : totalHits;
+    const totalScrollableHits = (totalHits > 1000) ? 1000 : totalHits;
     const totalScrollablePages = Math.floor(totalScrollableHits / 10);
     const currentPageArticles = articles.response.docs;
     
@@ -52,12 +52,7 @@ function displaySearchResults() {
       articlesContainer.appendChild(articleHTML);
     });
 
-    if (resultsPage === totalScrollablePages) {
-      pageBottom.style.display = 'none';
-    } else {
-      pageBottom.style.display = 'flex';
-    }
-    
+    pageBottom.style.display = (resultsPage === totalScrollablePages) ? 'none' : 'flex';
     sortControls.style.display = 'flex';
   }
 }
