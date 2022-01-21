@@ -6,18 +6,12 @@ const sortSelect = document.getElementById('sort-by-select');
 const filterMenu = document.getElementById('filters-container');
 const filtersButton = document.getElementById('filters-button');
 const queryInput = document.getElementById('query-input');
-const searchResultsDiv = document.getElementById('search-results-container');
 const articlesContainer = document.getElementById('articles-container');
 const pageBottom = document.getElementById('page-bottom');
 
 bindEvents();
 
 function bindEvents() {
-  window.addEventListener('load', () => {
-    const viewPortObserver = new IntersectionObserver(handleIntersections, {threshold: 0.5});
-    viewPortObserver.observe(pageBottom);
-  });
-  
   const submitButton = document.getElementById('submit');
 
   submitButton.addEventListener('click', event => {
@@ -38,6 +32,9 @@ function bindEvents() {
     event.preventDefault();
     toggleFilterMenuVisibility();
   });
+
+  const viewPortObserver = new IntersectionObserver(handleIntersections, { threshold: 0.5 });
+  viewPortObserver.observe(pageBottom); 
 }
 
 function displaySearchResults() {
@@ -62,7 +59,6 @@ function displaySearchResults() {
     }
     
     sortControls.style.display = 'flex';
-    searchResultsDiv.style.display = 'block';
   }
 }
 
@@ -220,7 +216,6 @@ function submitNewSearch() {
   resultsPage = 0;
   
   fetchArticles().then(() => {
-    searchResultsDiv.style.display = 'none';
     sortControls.style.display = 'none';
     pageBottom.style.display = 'none';
 

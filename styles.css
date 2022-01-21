@@ -26,8 +26,8 @@ h2 {
 main {
   display: grid;
   grid-template-rows: 150px auto auto auto auto 1fr;
+  justify-items: center;
   min-height: 100vh;
-  padding: 0 360px;
 }
 
 /* Buttons */
@@ -58,7 +58,6 @@ form {
   border: 1px solid #d6d6d6;
   display: grid;
   grid-template-rows: 70px auto;
-  justify-self: center;
   padding: 10px 15px;
   row-gap: 10px;
   width: 900px;
@@ -150,7 +149,6 @@ fieldset {
 #loading-msg {
   font-size: 18px;
   font-weight: bold;
-  justify-self: center;
   margin-bottom: 20px;
   text-align: center;
   visibility: hidden;
@@ -159,7 +157,6 @@ fieldset {
 /* Meta info (total hits) */
 
 #total-hits-container {
-  justify-self: center;
   margin-bottom: 25px;
   margin-top: 25px;
 }
@@ -185,7 +182,7 @@ select:hover {
   display: none;
   justify-content: flex-end;
   margin: 25px 0 10px 0;
-  padding: 0 200px;
+  width: 719px;
 }
 
 /* Search results */
@@ -200,6 +197,7 @@ article {
                        "keywords keywords";
   margin-bottom: 25px;
   padding: 25px;
+  width: 719px;
 }
 
 span {
@@ -254,12 +252,10 @@ span {
   background: #36382E;
 }
 
-#search-results-container {
-  display: none;
-}
-
 #articles-container {
-  padding: 0 200px;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Page bottom intersection */
@@ -273,7 +269,6 @@ span {
 
 #placeholder-article {
   height: 300px;
-  width: 719px;
 }
 
 .placeholder-content {

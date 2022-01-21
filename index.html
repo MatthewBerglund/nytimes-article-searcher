@@ -122,28 +122,26 @@
       </select>
     </div>
     <p id="loading-msg" data-visibility="hidden">Loading...</p>
-    <div id="search-results-container">
-      <div id="articles-container"></div>
-      <template>
-        <article>
-          <a target="blank" class="headline-link">
-            <h2></h2>
-          </a>
-          <p class="article-abstract"></p>
-          <img class="article-img"></img>
-          <p class="keywords"></p>
-        </article>
-      </template>
+    <div id="articles-container"></div>
+    <template>
+      <article>
+        <a target="blank" class="headline-link">
+          <h2></h2>
+        </a>
+        <p class="article-abstract"></p>
+        <img class="article-img"></img>
+        <p class="keywords"></p>
+      </article>
+    </template>
+    <div id="page-bottom">
+      <article id="placeholder-article" class="article">
+        <div class="placeholder-headline placeholder-content"></div>
+        <div class="article-abstract placeholder-abstract placeholder-content"></div>
+        <div class="article-img placeholder-img placeholder-content"></div>
+        <div class="keywords placeholder-keywords placeholder-content"></div>
+      </article>
     </div>
   </main>
-  <div id="page-bottom">
-    <article id="placeholder-article" class="article">
-      <div class="placeholder-headline placeholder-content"></div>
-      <div class="article-abstract placeholder-abstract placeholder-content"></div>
-      <div class="article-img placeholder-img placeholder-content"></div>
-      <div class="keywords placeholder-keywords placeholder-content"></div>
-    </article>
-  </div>
   <script src="main.js"></script>
 </body>
 </html>
