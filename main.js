@@ -29,11 +29,13 @@ function bindEvents() {
     searchSettings = getFormData();
     searchSettings.sortBy = 'relevance';
     sortSelect.value = 'relevance';
+    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
     submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
     searchSettings.sortBy = sortSelect.value;
+    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
     submitNewSearch();
   });
 
@@ -194,13 +196,15 @@ function getKeywordLink(keyword) {
   keywordLink.addEventListener('click', event => {
     const searchForm = document.querySelector('form');
     searchForm.reset();
+    
+    queryInput.value = event.target.textContent;
+    sortSelect.value = 'relevance';
 
     if (filterMenu.style.display === 'grid') {
       toggleFilterMenuVisibility();
     }
 
-    queryInput.value = event.target.textContent;
-    sortSelect.value = 'relevance';
+    searchSettings = getFormData();
     submitNewSearch();
     scroll(0, 0);
   });
@@ -249,7 +253,6 @@ function valuesFromFieldset(fieldset) {
 
 function submitNewSearch() {
   toggleLoading();
-  sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
   resultsPage = 0;
   
   fetchArticles().then(() => {
