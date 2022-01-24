@@ -228,7 +228,6 @@ function setFormControls() {
   endDate.value = searchSettings.end;
   locationInput.value = searchSettings.filters.glocation;
   sortSelect.value = searchSettings.sortBy;
-  // sortSelect.value = searchSettings.sortBy ? searchSettings.sortBy : 'relevance';
 
   searchSettings.filters.newsDesks.forEach(newsDesk => {
     let checkbox = document.querySelector(`input[value="${newsDesk}"]`);
