@@ -1,13 +1,13 @@
 let articles;
 let resultsPage;
 
+const sortControls = document.getElementById('sort-by-container');
 const sortSelect = document.getElementById('sort-by-select');
-const filtersButton = document.getElementById('filters-button');
 const filterMenu = document.getElementById('filters-container');
+const filtersButton = document.getElementById('filters-button');
 const queryInput = document.getElementById('query-input');
-const previousPageButton = document.getElementById('previous-page-button');
-const nextPageButton = document.getElementById('next-page-button');
 const articlesContainer = document.getElementById('articles-container');
+const pageBottom = document.getElementById('page-bottom');
 
 bindEvents();
 
@@ -16,15 +16,15 @@ function bindEvents() {
 
   submitButton.addEventListener('click', event => {
     event.preventDefault();
+    sortSelect.value = 'relevance';
     submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
     toggleLoading();
-    resultsPage = 0;
     fetchArticles().then(() => {
+      submitNewSearch();
       toggleLoading();
-      displaySearchResults();
     });
   });
 
@@ -33,62 +33,18 @@ function bindEvents() {
     toggleFilterMenuVisibility();
   });
 
-  previousPageButton.addEventListener('click', () => {
-    toggleLoading();
-    resultsPage--;
-    fetchArticles().then(() => {
-      toggleLoading();
-      displaySearchResults();
-    });
-    scroll(0, 0);
-  });
-
-  nextPageButton.addEventListener('click', () => {
-    toggleLoading();
-    resultsPage++;
-    fetchArticles().then(() => {
-      toggleLoading();
-      displaySearchResults();
-    });
-    scroll(0, 0);
-  });
-}
-
-function configurePaginationButtons(pageArticles) {
-  const numArticlesOnPage = pageArticles.length;
-  
-  if (numArticlesOnPage < 10) {
-    nextPageButton.disabled = true;
-    nextPageButton.classList.add('disabled');
-  } else {
-    nextPageButton.disabled = false;
-    nextPageButton.classList.remove('disabled');
-  }
-
-  if (resultsPage === 0) {
-    previousPageButton.disabled = true;
-    previousPageButton.classList.add('disabled');
-  } else {
-    previousPageButton.disabled = false;
-    previousPageButton.classList.remove('disabled');
-  }
+  const viewPortObserver = new IntersectionObserver(handleIntersections, { threshold: 0.1 });
+  viewPortObserver.observe(pageBottom); 
 }
 
 function displaySearchResults() {
-  const searchResultsDiv = document.getElementById('search-results-container');
-  const sortControls = document.getElementById('sort-by-container');
-
-  searchResultsDiv.style.display = 'none';
-  sortControls.style.display = 'none';
-
-  while (articlesContainer.firstChild) {
-    articlesContainer.removeChild(articlesContainer.firstChild);
-  }
-
   const totalHits = articles.response.meta.hits; 
   displayTotalHits(totalHits);
 
   if (totalHits > 0) {
+    // API limits pagination to 1000 articles (100 pages)
+    const totalScrollableHits = (totalHits > 1000) ? 1000 : totalHits;
+    const totalScrollablePages = Math.floor(totalScrollableHits / 10);
     const currentPageArticles = articles.response.docs;
     
     currentPageArticles.forEach(article => {
@@ -96,9 +52,8 @@ function displaySearchResults() {
       articlesContainer.appendChild(articleHTML);
     });
 
+    pageBottom.style.display = (resultsPage === totalScrollablePages) ? 'none' : 'flex';
     sortControls.style.display = 'flex';
-    searchResultsDiv.style.display = 'block';
-    configurePaginationButtons(currentPageArticles);
   }
 }
 
@@ -229,6 +184,7 @@ function getKeywordLink(keyword) {
     }
 
     queryInput.value = event.target.textContent;
+    sortSelect.value = 'relevance';
     submitNewSearch();
     scroll(0, 0);
   });
@@ -236,13 +192,34 @@ function getKeywordLink(keyword) {
   return keywordLink;
 }
 
+function handleIntersections(entries) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      pageBottom.style.visibility = 'visible';
+      resultsPage++;
+      
+      fetchArticles().then(() => {
+        displaySearchResults();
+        pageBottom.style.visibility = 'hidden';
+      });
+    }
+  });
+}
+
 function submitNewSearch() {
   toggleLoading();
   resultsPage = 0;
-  sortSelect.value = 'relevance';
+  
   fetchArticles().then(() => {
-    toggleLoading();
+    sortControls.style.display = 'none';
+    pageBottom.style.display = 'none';
+
+    while (articlesContainer.firstChild) {
+      articlesContainer.removeChild(articlesContainer.firstChild);
+    }
+
     displaySearchResults();
+    toggleLoading();
   });
 }
 
