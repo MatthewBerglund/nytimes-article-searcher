@@ -145,7 +145,7 @@ function getArticleHTML(article) {
 }
 
 function getFormData() {
-  let formData = {};
+  const formData = {};
   formData.query = queryInput.value.trim();
   formData.begin = beginDate.value;
   formData.end = endDate.value;
