@@ -196,7 +196,6 @@ function getKeywordLink(keyword) {
   keywordLink.addEventListener('click', event => {
     const searchForm = document.querySelector('form');
     searchForm.reset();
-    
     queryInput.value = event.target.textContent;
     sortSelect.value = 'relevance';
 
@@ -205,6 +204,7 @@ function getKeywordLink(keyword) {
     }
 
     searchSettings = getFormData();
+    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
     submitNewSearch();
     scroll(0, 0);
   });
