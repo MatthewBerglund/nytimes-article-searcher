@@ -32,6 +32,7 @@ function bindEvents() {
   
   sortSelect.addEventListener('change', () => {
     toggleLoading();
+    searchSettings.sortBy = sortSelect.value;
     fetchArticles().then(() => {
       submitNewSearch();
       toggleLoading();
