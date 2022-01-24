@@ -17,7 +17,7 @@ bindEvents();
 
 if (sessionStorage.getItem('lastSearch')) {
   searchSettings = JSON.parse(sessionStorage.getItem('lastSearch'));
-  retrieveSearch(searchSettings);
+  retrieveSearch();
 }
 
 function bindEvents() {
@@ -27,7 +27,7 @@ function bindEvents() {
     event.preventDefault();
     searchSettings = getFormData();
     sortSelect.value = 'relevance';
-    submitNewSearch(searchSettings);
+    submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
@@ -73,7 +73,7 @@ function displayTotalHits(totalHits) {
   totalHitsPara.style.display = 'block';
 }
 
-async function fetchArticles(searchSettings) {
+async function fetchArticles() {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
   let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
@@ -162,23 +162,24 @@ function getFormData() {
   return formData;
 }
 
-function getFilterValuesForURL(filterSettings) {
+function getFilterValuesForURL() {
+  const filters = searchSettings.filters;
   let filterValues = [];
-
-  if (filterSettings.newsDesks.length > 0) {
-    let values = filterSettings.newsDesks.map(newsDesk => `"${newsDesk}"`);
+ 
+  if (filters.newsDesks.length > 0) {
+    let values = filters.newsDesks.map(newsDesk => `"${newsDesk}"`);
     let componentString = encodeURIComponent(values.join(' '));
     filterValues.push(`news_desk:(${componentString})`)
   }
 
-  if (filterSettings.materialTypes.length > 0) {
-    let values = filterSettings.materialTypes.map(type => `"${type}"`);
+  if (filters.materialTypes.length > 0) {
+    let values = filters.materialTypes.map(type => `"${type}"`);
     let componentString = encodeURIComponent(values.join(' '));
     filterValues.push(`type_of_material:(${componentString})`)
   }
 
-  if (filterSettings.glocation) {
-    let componentString = encodeURIComponent(`"${filterSettings.glocation}"`);
+  if (filters.glocation) {
+    let componentString = encodeURIComponent(`"${filters.glocation}"`);
     filterValues.push(`glocations.contains:(${componentString})`);
   }
 
@@ -222,7 +223,7 @@ function handleIntersections(entries) {
   });
 }
 
-function retrieveSearch(searchSettings) {
+function retrieveSearch() {
   queryInput.value = searchSettings.query;
   beginDate.value = searchSettings.begin;
   endDate.value = searchSettings.end;
@@ -239,7 +240,7 @@ function retrieveSearch(searchSettings) {
     checkbox.checked = true;
   });
 
-  submitNewSearch(searchSettings);
+  submitNewSearch();
 }
 
 function valuesFromFieldset(fieldset) {
@@ -249,12 +250,12 @@ function valuesFromFieldset(fieldset) {
   return values;
 }
 
-function submitNewSearch(searchSettings) {
+function submitNewSearch() {
   toggleLoading();
   sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
   resultsPage = 0;
   
-  fetchArticles(searchSettings).then(() => {
+  fetchArticles().then(() => {
     sortControls.style.display = 'none';
     pageBottom.style.display = 'none';
 
