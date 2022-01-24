@@ -1,6 +1,3 @@
-let articles;
-let resultsPage;
-
 const sortControls = document.getElementById('sort-by-container');
 const sortSelect = document.getElementById('sort-by-select');
 const filterMenu = document.getElementById('filters-container');
@@ -8,16 +5,29 @@ const filtersButton = document.getElementById('filters-button');
 const queryInput = document.getElementById('query-input');
 const articlesContainer = document.getElementById('articles-container');
 const pageBottom = document.getElementById('page-bottom');
+const beginDate = document.getElementById('begin-date');
+const endDate = document.getElementById('end-date');
+const locationInput = document.getElementById('location-search');
+
+let searchSettings;
+let articles;
+let resultsPage;
 
 bindEvents();
+
+if (sessionStorage.getItem('lastSearch')) {
+  searchSettings = JSON.parse(sessionStorage.getItem('lastSearch'));
+  retrieveSearch(searchSettings);
+}
 
 function bindEvents() {
   const submitButton = document.getElementById('submit');
 
   submitButton.addEventListener('click', event => {
     event.preventDefault();
+    searchSettings = getFormData();
     sortSelect.value = 'relevance';
-    submitNewSearch();
+    submitNewSearch(searchSettings);
   });
   
   sortSelect.addEventListener('change', () => {
@@ -63,36 +73,28 @@ function displayTotalHits(totalHits) {
   totalHitsPara.style.display = 'block';
 }
 
-async function fetchArticles() {
+async function fetchArticles(searchSettings) {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
   let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
 
-  const query = queryInput.value.trim();
-
-  if (query) {
-    fullURL += `&q=${query}`;
+  if (searchSettings.query) {
+    fullURL += `&q=${searchSettings.query}`;
   }
 
-  const beginDate = document.getElementById('begin-date').value;
-
-  if (beginDate) {
-    fullURL += `&begin_date=${beginDate}`;
+  if (searchSettings.begin) {
+    fullURL += `&begin_date=${searchSettings.begin}`;
   }
 
-  const endDate = document.getElementById('end-date').value;
-
-  if (endDate) {
-    fullURL += `&end_date=${endDate}`;
+  if (searchSettings.end) {
+    fullURL += `&end_date=${searchSettings.end}`;
   }
 
-  const sortByValue = sortSelect.value;
-
-  if (sortByValue) {
-    fullURL += `&sort=${sortByValue}`;
+  if (searchSettings.sortBy) {
+    fullURL += `&sort=${searchSettings.sortBy}`;
   }
 
-  let queryFilters = getFilterValuesForURL();
+  let queryFilters = getFilterValuesForURL(searchSettings.filters);
 
   if (queryFilters.length > 0) {
     queryFilters = queryFilters.join(' AND ');
@@ -142,28 +144,42 @@ function getArticleHTML(article) {
   return articleHTML;
 }
 
-function getFilterValuesForURL() {
+function getFormData() {
+  let formData = {};
+  formData.query = queryInput.value.trim();
+  formData.begin = beginDate.value;
+  formData.end = endDate.value;
+  
+  formData.filters = {};
+  formData.filters.glocation = locationInput.value.trim();
+
+  const newsDeskFieldset = document.getElementById('newsdesk-fieldset');
+  formData.filters.newsDesks = valuesFromFieldset(newsDeskFieldset);
+
+  const materialsFieldset = document.getElementById('material-types-fieldset');
+  formData.filters.materialTypes = valuesFromFieldset(materialsFieldset);
+  
+  return formData;
+}
+
+function getFilterValuesForURL(filterSettings) {
   let filterValues = [];
 
-  const newsDeskFilters = document.getElementById('newsdesk-fieldset');
-  const newsDeskValues = valuesFromFieldset(newsDeskFilters);
-
-  if (newsDeskValues) {
-    filterValues.push(`news_desk:(${newsDeskValues})`);
+  if (filterSettings.newsDesks.length > 0) {
+    let values = filterSettings.newsDesks.map(newsDesk => `"${newsDesk}"`);
+    let componentString = encodeURIComponent(values.join(' '));
+    filterValues.push(`news_desk:(${componentString})`)
   }
 
-  const materialTypeFilters = document.getElementById('material-types-fieldset');
-  const materialTypeValues = valuesFromFieldset(materialTypeFilters);
-
-  if (materialTypeValues) {
-    filterValues.push(`type_of_material:(${materialTypeValues})`);
+  if (filterSettings.materialTypes.length > 0) {
+    let values = filterSettings.materialTypes.map(type => `"${type}"`);
+    let componentString = encodeURIComponent(values.join(' '));
+    filterValues.push(`type_of_material:(${componentString})`)
   }
 
-  let location = document.getElementById('location-search').value.trim();
-
-  if (location) {
-    location = encodeURIComponent(`"${location}"`);
-    filterValues.push(`glocations.contains:(${location})`);
+  if (filterSettings.glocation) {
+    let componentString = encodeURIComponent(`"${filterSettings.glocation}"`);
+    filterValues.push(`glocations.contains:(${componentString})`);
   }
 
   return filterValues;
@@ -206,11 +222,39 @@ function handleIntersections(entries) {
   });
 }
 
-function submitNewSearch() {
+function retrieveSearch(searchSettings) {
+  queryInput.value = searchSettings.query;
+  beginDate.value = searchSettings.begin;
+  endDate.value = searchSettings.end;
+  locationInput.value = searchSettings.filters.glocation;
+  sortSelect.value = searchSettings.sortBy ? searchSettings.sortBy : 'relevance';
+
+  searchSettings.filters.newsDesks.forEach(newsDesk => {
+    let checkbox = document.querySelector(`input[value="${newsDesk}"]`);
+    checkbox.checked = true;
+  });
+
+  searchSettings.filters.materialTypes.forEach(type => {
+    let checkbox = document.querySelector(`input[value="${type}"]`);
+    checkbox.checked = true;
+  });
+
+  submitNewSearch(searchSettings);
+}
+
+function valuesFromFieldset(fieldset) {
+  let elements = Array.from(fieldset.elements);
+  let selectedElements = elements.filter(element => element.checked);
+  const values = selectedElements.map(element => element.value);
+  return values;
+}
+
+function submitNewSearch(searchSettings) {
   toggleLoading();
+  sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
   resultsPage = 0;
   
-  fetchArticles().then(() => {
+  fetchArticles(searchSettings).then(() => {
     sortControls.style.display = 'none';
     pageBottom.style.display = 'none';
 
@@ -244,15 +288,5 @@ function toggleLoading() {
     loadingMsg.style.visibility = 'hidden';
     articlesContainer.style.opacity = 1;
     loadingMsg.dataset.visibility = 'hidden';
-  }
-}
-
-function valuesFromFieldset(fieldset) {
-  const elements = Array.from(fieldset.elements);
-  const selectedElements = elements.filter(element => element.checked);
-
-  if (selectedElements.length > 0) {
-    let values = selectedElements.map(element => `"${element.value}"`).join(' ');
-    return encodeURIComponent(values);
   }
 }
