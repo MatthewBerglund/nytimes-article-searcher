@@ -17,7 +17,8 @@ bindEvents();
 
 if (sessionStorage.getItem('lastSearch')) {
   searchSettings = JSON.parse(sessionStorage.getItem('lastSearch'));
-  retrieveSearch();
+  setFormControls();
+  submitNewSearch();
 }
 
 function bindEvents() {
@@ -26,17 +27,14 @@ function bindEvents() {
   submitButton.addEventListener('click', event => {
     event.preventDefault();
     searchSettings = getFormData();
+    searchSettings.sortBy = 'relevance';
     sortSelect.value = 'relevance';
     submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
-    toggleLoading();
     searchSettings.sortBy = sortSelect.value;
-    fetchArticles().then(() => {
-      submitNewSearch();
-      toggleLoading();
-    });
+    submitNewSearch();
   });
 
   filtersButton.addEventListener('click', event => {
@@ -224,12 +222,13 @@ function handleIntersections(entries) {
   });
 }
 
-function retrieveSearch() {
+function setFormControls() {
   queryInput.value = searchSettings.query;
   beginDate.value = searchSettings.begin;
   endDate.value = searchSettings.end;
   locationInput.value = searchSettings.filters.glocation;
-  sortSelect.value = searchSettings.sortBy ? searchSettings.sortBy : 'relevance';
+  sortSelect.value = searchSettings.sortBy;
+  // sortSelect.value = searchSettings.sortBy ? searchSettings.sortBy : 'relevance';
 
   searchSettings.filters.newsDesks.forEach(newsDesk => {
     let checkbox = document.querySelector(`input[value="${newsDesk}"]`);
@@ -240,8 +239,6 @@ function retrieveSearch() {
     let checkbox = document.querySelector(`input[value="${type}"]`);
     checkbox.checked = true;
   });
-
-  submitNewSearch();
 }
 
 function valuesFromFieldset(fieldset) {
