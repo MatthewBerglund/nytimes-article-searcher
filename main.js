@@ -26,15 +26,14 @@ function bindEvents() {
 
   submitButton.addEventListener('click', event => {
     event.preventDefault();
-    searchSettings = getFormData();
-    searchSettings.sortBy = 'relevance';
     sortSelect.value = 'relevance';
+    searchSettings = getFormData();
     sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
     submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
-    searchSettings.sortBy = sortSelect.value;
+    searchSettings = getFormData();
     sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
     submitNewSearch();
   });
@@ -150,6 +149,7 @@ function getFormData() {
   formData.query = queryInput.value.trim();
   formData.begin = beginDate.value;
   formData.end = endDate.value;
+  formData.sortBy = sortSelect.value;
   
   formData.filters = {};
   formData.filters.glocation = locationInput.value.trim();
@@ -196,15 +196,16 @@ function getKeywordLink(keyword) {
   keywordLink.addEventListener('click', event => {
     const searchForm = document.querySelector('form');
     searchForm.reset();
+    
     queryInput.value = event.target.textContent;
     sortSelect.value = 'relevance';
+    searchSettings = getFormData();
+    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
 
     if (filterMenu.style.display === 'grid') {
       toggleFilterMenuVisibility();
     }
 
-    searchSettings = getFormData();
-    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
     submitNewSearch();
     scroll(0, 0);
   });
