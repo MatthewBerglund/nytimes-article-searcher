@@ -4,7 +4,7 @@ const filterMenu = document.getElementById('filters-container');
 const filtersButton = document.getElementById('filters-button');
 const queryInput = document.getElementById('query-input');
 const articlesContainer = document.getElementById('articles-container');
-const pageBottom = document.getElementById('page-bottom');
+const paginationTrigger = document.getElementById('pagination-trigger');
 const beginDate = document.getElementById('begin-date');
 const endDate = document.getElementById('end-date');
 const locationInput = document.getElementById('location-search');
@@ -42,7 +42,7 @@ function bindEvents() {
   });
 
   const viewPortObserver = new IntersectionObserver(handleIntersections, { threshold: 0.1 });
-  viewPortObserver.observe(pageBottom); 
+  viewPortObserver.observe(paginationTrigger); 
 }
 
 function displaySearchResults() {
@@ -64,7 +64,7 @@ function displaySearchResults() {
     // API limits pagination to 1000 articles (100 pages)
     const totalScrollableHits = (totalHits > 1000) ? 1000 : totalHits;
     const totalScrollablePages = Math.floor(totalScrollableHits / 10);
-    pageBottom.style.display = (resultsPage === totalScrollablePages) ? 'none' : 'flex';
+    paginationTrigger.style.display = (resultsPage === totalScrollablePages) ? 'none' : 'flex';
   }
 }
 
@@ -211,12 +211,12 @@ function getKeywordLink(keyword) {
 function handleIntersections(entries) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      pageBottom.style.visibility = 'visible';
+      paginationTrigger.style.visibility = 'visible';
       resultsPage++;
       
       fetchArticles().then(() => {
         displaySearchResults();
-        pageBottom.style.visibility = 'hidden';
+        paginationTrigger.style.visibility = 'hidden';
       });
     }
   });
@@ -253,7 +253,7 @@ function submitNewSearch() {
   
   fetchArticles().then(() => {
     sortControls.style.display = 'none';
-    pageBottom.style.display = 'none';
+    paginationTrigger.style.display = 'none';
 
     while (articlesContainer.firstChild) {
       articlesContainer.removeChild(articlesContainer.firstChild);
