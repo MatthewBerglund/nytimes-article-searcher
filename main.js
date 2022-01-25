@@ -89,7 +89,7 @@ async function fetchArticles() {
     fullURL += `&sort=${searchSettings.sortBy}`;
   }
 
-  let queryFilters = getFilterValuesForURL(searchSettings.filters);
+  let queryFilters = getFilterValuesForURL();
 
   if (queryFilters.length > 0) {
     queryFilters = queryFilters.join(' AND ');
