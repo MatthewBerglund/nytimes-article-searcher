@@ -241,8 +241,8 @@ function setFormControls() {
 }
 
 function valuesFromFieldset(fieldset) {
-  let elements = Array.from(fieldset.elements);
-  let selectedElements = elements.filter(element => element.checked);
+  const elements = Array.from(fieldset.elements);
+  const selectedElements = elements.filter(element => element.checked);
   const values = selectedElements.map(element => element.value);
   return values;
 }
