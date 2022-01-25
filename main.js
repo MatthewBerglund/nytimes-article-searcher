@@ -1,15 +1,23 @@
-let articles;
-let resultsPage;
-
 const sortControls = document.getElementById('sort-by-container');
 const sortSelect = document.getElementById('sort-by-select');
 const filterMenu = document.getElementById('filters-container');
 const filtersButton = document.getElementById('filters-button');
 const queryInput = document.getElementById('query-input');
 const articlesContainer = document.getElementById('articles-container');
-const pageBottom = document.getElementById('page-bottom');
+const paginationTrigger = document.getElementById('pagination-trigger');
+const beginDate = document.getElementById('begin-date');
+const endDate = document.getElementById('end-date');
+const locationInput = document.getElementById('location-search');
+
+let searchSettings, articles, resultsPage;
 
 bindEvents();
+
+if (sessionStorage.getItem('lastSearch')) {
+  searchSettings = JSON.parse(sessionStorage.getItem('lastSearch'));
+  setFormControls();
+  submitNewSearch();
+}
 
 function bindEvents() {
   const submitButton = document.getElementById('submit');
@@ -17,15 +25,15 @@ function bindEvents() {
   submitButton.addEventListener('click', event => {
     event.preventDefault();
     sortSelect.value = 'relevance';
+    searchSettings = getFormData();
+    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
     submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
-    toggleLoading();
-    fetchArticles().then(() => {
-      submitNewSearch();
-      toggleLoading();
-    });
+    searchSettings = getFormData();
+    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
+    submitNewSearch();
   });
 
   filtersButton.addEventListener('click', event => {
@@ -34,17 +42,16 @@ function bindEvents() {
   });
 
   const viewPortObserver = new IntersectionObserver(handleIntersections, { threshold: 0.1 });
-  viewPortObserver.observe(pageBottom); 
+  viewPortObserver.observe(paginationTrigger); 
 }
 
 function displaySearchResults() {
-  const totalHits = articles.response.meta.hits; 
-  displayTotalHits(totalHits);
+  const totalHits = articles.response.meta.hits;
+  const totalHitsPara = document.getElementById('total-hits-msg');
+  totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
+  totalHitsPara.style.display = 'block';
 
   if (totalHits > 0) {
-    // API limits pagination to 1000 articles (100 pages)
-    const totalScrollableHits = (totalHits > 1000) ? 1000 : totalHits;
-    const totalScrollablePages = Math.floor(totalScrollableHits / 10);
     const currentPageArticles = articles.response.docs;
     
     currentPageArticles.forEach(article => {
@@ -52,15 +59,13 @@ function displaySearchResults() {
       articlesContainer.appendChild(articleHTML);
     });
 
-    pageBottom.style.display = (resultsPage === totalScrollablePages) ? 'none' : 'flex';
     sortControls.style.display = 'flex';
-  }
-}
 
-function displayTotalHits(totalHits) {
-  const totalHitsPara = document.getElementById('total-hits-msg');
-  totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
-  totalHitsPara.style.display = 'block';
+    // API limits pagination to 1000 articles (100 pages)
+    const totalScrollableHits = (totalHits > 1000) ? 1000 : totalHits;
+    const totalScrollablePages = Math.floor(totalScrollableHits / 10);
+    paginationTrigger.style.display = (resultsPage === totalScrollablePages) ? 'none' : 'flex';
+  }
 }
 
 async function fetchArticles() {
@@ -68,28 +73,20 @@ async function fetchArticles() {
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
   let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
 
-  const query = queryInput.value.trim();
-
-  if (query) {
-    fullURL += `&q=${query}`;
+  if (searchSettings.query) {
+    fullURL += `&q=${searchSettings.query}`;
   }
 
-  const beginDate = document.getElementById('begin-date').value;
-
-  if (beginDate) {
-    fullURL += `&begin_date=${beginDate}`;
+  if (searchSettings.begin) {
+    fullURL += `&begin_date=${searchSettings.begin}`;
   }
 
-  const endDate = document.getElementById('end-date').value;
-
-  if (endDate) {
-    fullURL += `&end_date=${endDate}`;
+  if (searchSettings.end) {
+    fullURL += `&end_date=${searchSettings.end}`;
   }
 
-  const sortByValue = sortSelect.value;
-
-  if (sortByValue) {
-    fullURL += `&sort=${sortByValue}`;
+  if (searchSettings.sortBy) {
+    fullURL += `&sort=${searchSettings.sortBy}`;
   }
 
   let queryFilters = getFilterValuesForURL();
@@ -142,28 +139,44 @@ function getArticleHTML(article) {
   return articleHTML;
 }
 
+function getFormData() {
+  const formData = {};
+  formData.query = queryInput.value.trim();
+  formData.begin = beginDate.value;
+  formData.end = endDate.value;
+  formData.sortBy = sortSelect.value;
+  
+  formData.filters = {};
+  formData.filters.glocation = locationInput.value.trim();
+
+  const newsDeskFieldset = document.getElementById('newsdesk-fieldset');
+  formData.filters.newsDesks = valuesFromFieldset(newsDeskFieldset);
+
+  const materialsFieldset = document.getElementById('material-types-fieldset');
+  formData.filters.materialTypes = valuesFromFieldset(materialsFieldset);
+  
+  return formData;
+}
+
 function getFilterValuesForURL() {
+  const filters = searchSettings.filters;
   let filterValues = [];
-
-  const newsDeskFilters = document.getElementById('newsdesk-fieldset');
-  const newsDeskValues = valuesFromFieldset(newsDeskFilters);
-
-  if (newsDeskValues) {
-    filterValues.push(`news_desk:(${newsDeskValues})`);
+ 
+  if (filters.newsDesks.length > 0) {
+    let values = filters.newsDesks.map(newsDesk => `"${newsDesk}"`);
+    let componentString = encodeURIComponent(values.join(' '));
+    filterValues.push(`news_desk:(${componentString})`)
   }
 
-  const materialTypeFilters = document.getElementById('material-types-fieldset');
-  const materialTypeValues = valuesFromFieldset(materialTypeFilters);
-
-  if (materialTypeValues) {
-    filterValues.push(`type_of_material:(${materialTypeValues})`);
+  if (filters.materialTypes.length > 0) {
+    let values = filters.materialTypes.map(type => `"${type}"`);
+    let componentString = encodeURIComponent(values.join(' '));
+    filterValues.push(`type_of_material:(${componentString})`)
   }
 
-  let location = document.getElementById('location-search').value.trim();
-
-  if (location) {
-    location = encodeURIComponent(`"${location}"`);
-    filterValues.push(`glocations.contains:(${location})`);
+  if (filters.glocation) {
+    let componentString = encodeURIComponent(`"${filters.glocation}"`);
+    filterValues.push(`glocations.contains:(${componentString})`);
   }
 
   return filterValues;
@@ -178,13 +191,16 @@ function getKeywordLink(keyword) {
   keywordLink.addEventListener('click', event => {
     const searchForm = document.querySelector('form');
     searchForm.reset();
+    
+    queryInput.value = event.target.textContent;
+    sortSelect.value = 'relevance';
+    searchSettings = getFormData();
+    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
 
     if (filterMenu.style.display === 'grid') {
       toggleFilterMenuVisibility();
     }
 
-    queryInput.value = event.target.textContent;
-    sortSelect.value = 'relevance';
     submitNewSearch();
     scroll(0, 0);
   });
@@ -195,15 +211,40 @@ function getKeywordLink(keyword) {
 function handleIntersections(entries) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      pageBottom.style.visibility = 'visible';
+      paginationTrigger.style.visibility = 'visible';
       resultsPage++;
       
       fetchArticles().then(() => {
         displaySearchResults();
-        pageBottom.style.visibility = 'hidden';
+        paginationTrigger.style.visibility = 'hidden';
       });
     }
   });
+}
+
+function setFormControls() {
+  queryInput.value = searchSettings.query;
+  beginDate.value = searchSettings.begin;
+  endDate.value = searchSettings.end;
+  locationInput.value = searchSettings.filters.glocation;
+  sortSelect.value = searchSettings.sortBy;
+
+  searchSettings.filters.newsDesks.forEach(newsDesk => {
+    let checkbox = document.querySelector(`input[value="${newsDesk}"]`);
+    checkbox.checked = true;
+  });
+
+  searchSettings.filters.materialTypes.forEach(type => {
+    let checkbox = document.querySelector(`input[value="${type}"]`);
+    checkbox.checked = true;
+  });
+}
+
+function valuesFromFieldset(fieldset) {
+  const elements = Array.from(fieldset.elements);
+  const selectedElements = elements.filter(element => element.checked);
+  const values = selectedElements.map(element => element.value);
+  return values;
 }
 
 function submitNewSearch() {
@@ -212,7 +253,7 @@ function submitNewSearch() {
   
   fetchArticles().then(() => {
     sortControls.style.display = 'none';
-    pageBottom.style.display = 'none';
+    paginationTrigger.style.display = 'none';
 
     while (articlesContainer.firstChild) {
       articlesContainer.removeChild(articlesContainer.firstChild);
@@ -244,15 +285,5 @@ function toggleLoading() {
     loadingMsg.style.visibility = 'hidden';
     articlesContainer.style.opacity = 1;
     loadingMsg.dataset.visibility = 'hidden';
-  }
-}
-
-function valuesFromFieldset(fieldset) {
-  const elements = Array.from(fieldset.elements);
-  const selectedElements = elements.filter(element => element.checked);
-
-  if (selectedElements.length > 0) {
-    let values = selectedElements.map(element => `"${element.value}"`).join(' ');
-    return encodeURIComponent(values);
   }
 }

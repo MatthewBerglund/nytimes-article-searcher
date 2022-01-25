@@ -260,7 +260,7 @@ span {
 
 /* Page bottom intersection */
 
-#page-bottom {
+#pagination-trigger {
   align-items: center;
   display: none;
   justify-content: center;
