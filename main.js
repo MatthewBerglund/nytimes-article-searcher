@@ -46,13 +46,12 @@ function bindEvents() {
 }
 
 function displaySearchResults() {
-  const totalHits = articles.response.meta.hits; 
-  displayTotalHits(totalHits);
+  const totalHits = articles.response.meta.hits;
+  const totalHitsPara = document.getElementById('total-hits-msg');
+  totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
+  totalHitsPara.style.display = 'block';
 
   if (totalHits > 0) {
-    // API limits pagination to 1000 articles (100 pages)
-    const totalScrollableHits = (totalHits > 1000) ? 1000 : totalHits;
-    const totalScrollablePages = Math.floor(totalScrollableHits / 10);
     const currentPageArticles = articles.response.docs;
     
     currentPageArticles.forEach(article => {
@@ -60,15 +59,13 @@ function displaySearchResults() {
       articlesContainer.appendChild(articleHTML);
     });
 
-    pageBottom.style.display = (resultsPage === totalScrollablePages) ? 'none' : 'flex';
     sortControls.style.display = 'flex';
-  }
-}
 
-function displayTotalHits(totalHits) {
-  const totalHitsPara = document.getElementById('total-hits-msg');
-  totalHitsPara.textContent = `Your query returned ${totalHits} hits.`;
-  totalHitsPara.style.display = 'block';
+    // API limits pagination to 1000 articles (100 pages)
+    const totalScrollableHits = (totalHits > 1000) ? 1000 : totalHits;
+    const totalScrollablePages = Math.floor(totalScrollableHits / 10);
+    pageBottom.style.display = (resultsPage === totalScrollablePages) ? 'none' : 'flex';
+  }
 }
 
 async function fetchArticles() {
