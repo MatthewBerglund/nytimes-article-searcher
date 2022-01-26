@@ -9,7 +9,7 @@ const beginDate = document.getElementById('begin-date');
 const endDate = document.getElementById('end-date');
 const locationInput = document.getElementById('location-search');
 
-let searchSettings, articles, resultsPage;
+let articles, resultsPage;
 
 bindEvents();
 
