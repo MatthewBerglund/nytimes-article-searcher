@@ -103,42 +103,11 @@ function displaySearchResults() {
   }
 }
 
-function getSearchComponents() {
-  let components = '';
-
-  if (searchSettings.query) {
-    components += `&q=${searchSettings.query}`;
-  }
-
-  if (searchSettings.begin) {
-    components += `&begin_date=${searchSettings.begin}`;
-  }
-
-  if (searchSettings.end) {
-    components += `&end_date=${searchSettings.end}`;
-  }
-
-  if (searchSettings.sortBy) {
-    components += `&sort=${searchSettings.sortBy}`;
-  }
-
-  let queryFilters = getFilterValuesForURL();
-
-  if (queryFilters.length > 0) {
-    queryFilters = queryFilters.join(' AND ');
-    components += `&fq=${queryFilters}`;
-  }
-
-  return components;
-}
-
 async function fetchArticles() {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
-  let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
-
-  fullURL += getSearchComponents();
-
+  const searchComponents = window.location.search;
+  const fullURL = baseURL + searchComponents + `&api-key=${key}` + `&page=${resultsPage}`; 
   const response = await fetch(fullURL);
   articles = await response.json();
 }
