@@ -13,9 +13,7 @@ let searchSettings, articles, resultsPage;
 
 bindEvents();
 
-if (sessionStorage.getItem('lastSearch')) {
-  searchSettings = JSON.parse(sessionStorage.getItem('lastSearch'));
-  setFormControls();
+if (window.location.search) {
   submitNewSearch();
 }
 
@@ -24,7 +22,7 @@ function updateAppURL() {
   url.searchParams.set('sort', sortSelect.value);
 
   if (queryInput.value) {
-    url.searchParams.set('q', queryInput.value);
+    url.searchParams.set('q', queryInput.value.trim());
   } else {
     url.searchParams.delete('q');
   }
@@ -59,15 +57,13 @@ function bindEvents() {
   submitButton.addEventListener('click', event => {
     event.preventDefault();
     sortSelect.value = 'relevance';
-    searchSettings = getFormData();
+    // searchSettings = getFormData();
     updateAppURL();
-    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
     submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
-    searchSettings = getFormData();
-    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
+    // searchSettings = getFormData();
     submitNewSearch();
   });
 
@@ -151,44 +147,32 @@ function getArticleHTML(article) {
   return articleHTML;
 }
 
-function getFormData() {
-  const formData = {};
-  formData.query = queryInput.value.trim();
-  formData.begin = beginDate.value;
-  formData.end = endDate.value;
-  formData.sortBy = sortSelect.value;
+function getFilterValuesForURL() {
+  let filterValues = [];
   
-  formData.filters = {};
-  formData.filters.glocation = locationInput.value.trim();
+  const location = locationInput.value.trim();
+
+  if (location) {
+    let componentString = `"${location}"`;
+    filterValues.push(`glocations.contains:(${componentString})`);
+  }
 
   const newsDeskFieldset = document.getElementById('newsdesk-fieldset');
-  formData.filters.newsDesks = valuesFromFieldset(newsDeskFieldset);
+  const newsDesks = valuesFromFieldset(newsDeskFieldset);
 
-  const materialsFieldset = document.getElementById('material-types-fieldset');
-  formData.filters.materialTypes = valuesFromFieldset(materialsFieldset);
-  
-  return formData;
-}
-
-function getFilterValuesForURL() {
-  const filters = searchSettings.filters;
-  let filterValues = [];
- 
-  if (filters.newsDesks.length > 0) {
-    let values = filters.newsDesks.map(newsDesk => `"${newsDesk}"`);
-    let componentString = encodeURIComponent(values.join(' '));
+  if (newsDesks.length > 0) {
+    let values = newsDesks.map(newsDesk => `"${newsDesk}"`);
+    let componentString = values.join(' ');
     filterValues.push(`news_desk:(${componentString})`)
   }
 
-  if (filters.materialTypes.length > 0) {
-    let values = filters.materialTypes.map(type => `"${type}"`);
-    let componentString = encodeURIComponent(values.join(' '));
-    filterValues.push(`type_of_material:(${componentString})`)
-  }
+  const materialsFieldset = document.getElementById('material-types-fieldset');
+  const materialTypes = valuesFromFieldset(materialsFieldset);
 
-  if (filters.glocation) {
-    let componentString = encodeURIComponent(`"${filters.glocation}"`);
-    filterValues.push(`glocations.contains:(${componentString})`);
+  if (materialTypes.length > 0) {
+    let values = materialTypes.map(type => `"${type}"`);
+    let componentString = values.join(' ');
+    filterValues.push(`type_of_material:(${componentString})`)
   }
 
   return filterValues;
@@ -207,7 +191,6 @@ function getKeywordLink(keyword) {
     queryInput.value = event.target.textContent;
     sortSelect.value = 'relevance';
     searchSettings = getFormData();
-    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
 
     if (filterMenu.style.display === 'grid') {
       toggleFilterMenuVisibility();
