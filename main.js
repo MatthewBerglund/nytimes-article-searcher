@@ -190,12 +190,12 @@ function getKeywordLink(keyword) {
     
     queryInput.value = event.target.textContent;
     sortSelect.value = 'relevance';
-    searchSettings = getFormData();
 
     if (filterMenu.style.display === 'grid') {
       toggleFilterMenuVisibility();
     }
 
+    updateAppURL();
     submitNewSearch();
     scroll(0, 0);
   });
