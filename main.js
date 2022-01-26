@@ -14,6 +14,7 @@ let searchSettings, articles, resultsPage;
 bindEvents();
 
 if (window.location.search) {
+  setFormControls();
   submitNewSearch();
 }
 
@@ -57,13 +58,12 @@ function bindEvents() {
   submitButton.addEventListener('click', event => {
     event.preventDefault();
     sortSelect.value = 'relevance';
-    // searchSettings = getFormData();
     updateAppURL();
     submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
-    // searchSettings = getFormData();
+    updateAppURL();
     submitNewSearch();
   });
 
@@ -150,9 +150,11 @@ function getArticleHTML(article) {
 function getFilterValuesForURL() {
   let filterValues = [];
   
-  const location = locationInput.value.trim();
+  let location = locationInput.value.trim();
 
   if (location) {
+    const firstLetter = location.slice(0, 1);
+    location = location.replace(firstLetter, firstLetter.toUpperCase());
     let componentString = `"${location}"`;
     filterValues.push(`glocations.contains:(${componentString})`);
   }
@@ -217,22 +219,43 @@ function handleIntersections(entries) {
   });
 }
 
-function setFormControls() {
-  queryInput.value = searchSettings.query;
-  beginDate.value = searchSettings.begin;
-  endDate.value = searchSettings.end;
-  locationInput.value = searchSettings.filters.glocation;
-  sortSelect.value = searchSettings.sortBy;
+function setFormControls () {
+  const url = new URL(window.location);
+  
+  queryInput.value = url.searchParams.get('q');
+  beginDate.value = url.searchParams.get('begin_date');
+  endDate.value = url.searchParams.get('end_date');
+  sortSelect.value = url.searchParams.get('sort');
+  
+  const queryFilters = url.searchParams.get('fq');
+  
+  if (queryFilters) {
+    queryFilters = queryFilters.split(' AND ');
+    const glocations = queryFilters.find(component => component.includes('glocations'));
+    const newsDesks = queryFilters.find(component => component.includes('news_desk'));
+    const materialTypes = queryFilters.find(component => component.includes('type_of_material'));
 
-  searchSettings.filters.newsDesks.forEach(newsDesk => {
-    let checkbox = document.querySelector(`input[value="${newsDesk}"]`);
-    checkbox.checked = true;
-  });
+    if (glocations) {
+      const glocationValues = glocations.match(/([A-Z])\w+/g);
+      locationInput.value = glocationValues[0];
+    }
 
-  searchSettings.filters.materialTypes.forEach(type => {
-    let checkbox = document.querySelector(`input[value="${type}"]`);
-    checkbox.checked = true;
-  });
+    if (newsDesks) {
+      const newsDeskValues = newsDesks.match(/([A-Z])\w+/g);
+      newsDeskValues.forEach(newsDesk => {
+        let checkbox = document.querySelector(`input[value="${newsDesk}"]`);
+        checkbox.checked = true;
+      });
+    }
+
+    if (materialTypes) {
+      const materialTypeValues = materialTypes.match(/([A-Z])\w+/g);
+      materialTypeValues.forEach(type => {
+        let checkbox = document.querySelector(`input[value="${type}"]`);
+        checkbox.checked = true;
+      });
+    }
+  }
 }
 
 function submitNewSearch() {
