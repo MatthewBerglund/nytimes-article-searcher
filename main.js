@@ -29,24 +29,41 @@ function updateAppURL() {
   }
 
   if (beginDate.value) {
-    url.searchParams.set('begin_date', beginDate.value);
+    url.searchParams.set('begin', beginDate.value);
   } else {
-    url.searchParams.delete('begin_date');
+    url.searchParams.delete('begin');
   }
 
   if (endDate.value) {
-    url.searchParams.set('end_date', endDate.value);
+    url.searchParams.set('end', endDate.value);
   } else {
-    url.searchParams.delete('end_date');
+    url.searchParams.delete('end');
   }
 
-  let queryFilters = getFilterValuesForURL();
-
-  if (queryFilters.length > 0) {
-    queryFilters = queryFilters.join(' AND ');
-    url.searchParams.set('fq', queryFilters);
+  if (locationInput.value) {
+    url.searchParams.set('location', locationInput.value);
   } else {
-    url.searchParams.delete('fq');
+    url.searchParams.delete('location');
+  }
+
+  const newsDeskFieldset = document.getElementById('newsdesk-fieldset');
+  const newsDesks = valuesFromFieldset(newsDeskFieldset);
+
+  if (newsDesks.length > 0) {
+    let componentString = newsDesks.join(',');
+    url.searchParams.set('desks', componentString);
+  } else {
+    url.searchParams.delete('desks');
+  }
+
+  const materialsFieldset = document.getElementById('material-types-fieldset');
+  const materialTypes = valuesFromFieldset(materialsFieldset);
+
+  if (materialTypes.length > 0) {
+    let componentString = materialTypes.join(',');
+    url.searchParams.set('types', componentString);
+  } else {
+    url.searchParams.delete('types');
   }
 
   window.history.pushState({}, '', url);
@@ -102,8 +119,31 @@ function displaySearchResults() {
 async function fetchArticles() {
   const baseURL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
-  const searchComponents = window.location.search;
-  const fullURL = baseURL + searchComponents + `&api-key=${key}` + `&page=${resultsPage}`; 
+  let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
+
+  if (queryInput.value) {
+    fullURL += `&q=${queryInput.value}`;
+  }
+
+  if (beginDate.value) {
+    fullURL += `&begin_date=${beginDate.value}`;
+  }
+
+  if (endDate.value) {
+    fullURL += `&end_date=${endDate.value}`;
+  }
+
+  if (sortSelect.value) {
+    fullURL += `&sort=${sortSelect.value}`;
+  }
+
+  let queryFilters = getFilterValuesForURL();
+
+  if (queryFilters.length > 0) {
+    queryFilters = queryFilters.join(' AND ');
+    fullURL += `&fq=${queryFilters}`;
+  }
+
   const response = await fetch(fullURL);
   articles = await response.json();
 }
@@ -150,12 +190,10 @@ function getArticleHTML(article) {
 function getFilterValuesForURL() {
   let filterValues = [];
   
-  let location = locationInput.value.trim();
+  const location = locationInput.value.trim();
 
   if (location) {
-    const firstLetter = location.slice(0, 1);
-    location = location.replace(firstLetter, firstLetter.toUpperCase());
-    let componentString = `"${location}"`;
+    let componentString = encodeURIComponent(`"${location}"`);
     filterValues.push(`glocations.contains:(${componentString})`);
   }
 
@@ -164,7 +202,7 @@ function getFilterValuesForURL() {
 
   if (newsDesks.length > 0) {
     let values = newsDesks.map(newsDesk => `"${newsDesk}"`);
-    let componentString = values.join(' ');
+    let componentString = encodeURIComponent(values.join(' '));
     filterValues.push(`news_desk:(${componentString})`)
   }
 
@@ -173,7 +211,7 @@ function getFilterValuesForURL() {
 
   if (materialTypes.length > 0) {
     let values = materialTypes.map(type => `"${type}"`);
-    let componentString = values.join(' ');
+    let componentString = encodeURIComponent(values.join(' '));
     filterValues.push(`type_of_material:(${componentString})`)
   }
 
@@ -223,38 +261,27 @@ function setFormControls () {
   const url = new URL(window.location);
   
   queryInput.value = url.searchParams.get('q');
-  beginDate.value = url.searchParams.get('begin_date');
-  endDate.value = url.searchParams.get('end_date');
+  beginDate.value = url.searchParams.get('begin');
+  endDate.value = url.searchParams.get('end');
+  locationInput.value = url.searchParams.get('location');
   sortSelect.value = url.searchParams.get('sort');
+
+  const newsDesks = url.searchParams.get('desks');
   
-  const queryFilters = url.searchParams.get('fq');
+  if (newsDesks) {
+    newsDesks.split(',').forEach(desk => {
+      let checkbox = document.querySelector(`input[value="${desk}"]`);
+      checkbox.checked = true;
+    });
+  }
   
-  if (queryFilters) {
-    queryFilters = queryFilters.split(' AND ');
-    const glocations = queryFilters.find(component => component.includes('glocations'));
-    const newsDesks = queryFilters.find(component => component.includes('news_desk'));
-    const materialTypes = queryFilters.find(component => component.includes('type_of_material'));
+  const materialTypes = url.searchParams.get('types');
 
-    if (glocations) {
-      const glocationValues = glocations.match(/([A-Z])\w+/g);
-      locationInput.value = glocationValues[0];
-    }
-
-    if (newsDesks) {
-      const newsDeskValues = newsDesks.match(/([A-Z])\w+/g);
-      newsDeskValues.forEach(newsDesk => {
-        let checkbox = document.querySelector(`input[value="${newsDesk}"]`);
-        checkbox.checked = true;
-      });
-    }
-
-    if (materialTypes) {
-      const materialTypeValues = materialTypes.match(/([A-Z])\w+/g);
-      materialTypeValues.forEach(type => {
-        let checkbox = document.querySelector(`input[value="${type}"]`);
-        checkbox.checked = true;
-      });
-    }
+  if (materialTypes) {
+    materialTypes.split(',').forEach(type => {
+      let checkbox = document.querySelector(`input[value="${type}"]`);
+      checkbox.checked = true;
+    });
   }
 }
 
