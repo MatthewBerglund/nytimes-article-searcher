@@ -9,64 +9,33 @@ const beginDate = document.getElementById('begin-date');
 const endDate = document.getElementById('end-date');
 const locationInput = document.getElementById('location-search');
 
+let searchSettings = {};
 let articles, resultsPage;
 
 bindEvents();
 
 if (window.location.search) {
+  const url = new URL(window.location);
+  searchSettings.query = url.searchParams.get('q');
+  searchSettings.begin = url.searchParams.get('begin');
+  searchSettings.end = url.searchParams.get('end');
+  searchSettings.sortBy = url.searchParams.get('sort');
+  searchSettings.glocation = url.searchParams.get('glocation');
+
+  if (url.searchParams.has('desks')) {
+    searchSettings.newsDesks = url.searchParams.get('desks').split(',');
+  } else {
+    searchSettings.newsDesks = [];
+  }
+
+  if (url.searchParams.has('types')) {
+    searchSettings.materialTypes = url.searchParams.get('types').split(',');
+  } else {
+    searchSettings.materialTypes = [];
+  }
+
   setFormControls();
   submitNewSearch();
-}
-
-function updateAppURL() {
-  const url = new URL(window.location);
-  url.searchParams.set('sort', sortSelect.value);
-
-  if (queryInput.value) {
-    url.searchParams.set('q', queryInput.value.trim());
-  } else {
-    url.searchParams.delete('q');
-  }
-
-  if (beginDate.value) {
-    url.searchParams.set('begin', beginDate.value);
-  } else {
-    url.searchParams.delete('begin');
-  }
-
-  if (endDate.value) {
-    url.searchParams.set('end', endDate.value);
-  } else {
-    url.searchParams.delete('end');
-  }
-
-  if (locationInput.value) {
-    url.searchParams.set('location', locationInput.value);
-  } else {
-    url.searchParams.delete('location');
-  }
-
-  const newsDeskFieldset = document.getElementById('newsdesk-fieldset');
-  const newsDesks = valuesFromFieldset(newsDeskFieldset);
-
-  if (newsDesks.length > 0) {
-    let componentString = newsDesks.join(',');
-    url.searchParams.set('desks', componentString);
-  } else {
-    url.searchParams.delete('desks');
-  }
-
-  const materialsFieldset = document.getElementById('material-types-fieldset');
-  const materialTypes = valuesFromFieldset(materialsFieldset);
-
-  if (materialTypes.length > 0) {
-    let componentString = materialTypes.join(',');
-    url.searchParams.set('types', componentString);
-  } else {
-    url.searchParams.delete('types');
-  }
-
-  window.history.pushState({}, '', url);
 }
 
 function bindEvents() {
@@ -75,12 +44,14 @@ function bindEvents() {
   submitButton.addEventListener('click', event => {
     event.preventDefault();
     sortSelect.value = 'relevance';
-    updateAppURL();
+    searchSettings = getFormData();
+    updateBrowserURL();
     submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
-    updateAppURL();
+    searchSettings.sortBy = sortSelect.value;
+    updateBrowserURL();
     submitNewSearch();
   });
 
@@ -121,20 +92,20 @@ async function fetchArticles() {
   const key = 'brtQ9fXA0I1ATPctklZe6RcanXZRklYl';
   let fullURL = `${baseURL}?api-key=${key}&page=${resultsPage}`;
 
-  if (queryInput.value) {
-    fullURL += `&q=${queryInput.value}`;
+  if (searchSettings.query) {
+    fullURL += `&q=${searchSettings.query}`;
   }
 
-  if (beginDate.value) {
-    fullURL += `&begin_date=${beginDate.value}`;
+  if (searchSettings.begin) {
+    fullURL += `&begin_date=${searchSettings.begin}`;
   }
 
-  if (endDate.value) {
-    fullURL += `&end_date=${endDate.value}`;
+  if (searchSettings.end) {
+    fullURL += `&end_date=${searchSettings.end}`;
   }
 
-  if (sortSelect.value) {
-    fullURL += `&sort=${sortSelect.value}`;
+  if (searchSettings.sortBy) {
+    fullURL += `&sort=${searchSettings.sortBy}`;
   }
 
   let queryFilters = getFilterValuesForURL();
@@ -187,32 +158,41 @@ function getArticleHTML(article) {
   return articleHTML;
 }
 
-function getFilterValuesForURL() {
-  let filterValues = [];
-  
-  const location = locationInput.value.trim();
-
-  if (location) {
-    let componentString = encodeURIComponent(`"${location}"`);
-    filterValues.push(`glocations.contains:(${componentString})`);
-  }
+function getFormData() {
+  const formData = {};
+  formData.query = queryInput.value.trim();
+  formData.begin = beginDate.value;
+  formData.end = endDate.value;
+  formData.sortBy = sortSelect.value;
+  formData.glocation = locationInput.value.trim();
 
   const newsDeskFieldset = document.getElementById('newsdesk-fieldset');
-  const newsDesks = valuesFromFieldset(newsDeskFieldset);
+  formData.newsDesks = valuesFromFieldset(newsDeskFieldset);
 
-  if (newsDesks.length > 0) {
-    let values = newsDesks.map(newsDesk => `"${newsDesk}"`);
+  const materialsFieldset = document.getElementById('material-types-fieldset');
+  formData.materialTypes = valuesFromFieldset(materialsFieldset);
+  
+  return formData;
+}
+
+function getFilterValuesForURL() {
+  let filterValues = [];
+ 
+  if (searchSettings.newsDesks.length > 0) {
+    let values = searchSettings.newsDesks.map(newsDesk => `"${newsDesk}"`);
     let componentString = encodeURIComponent(values.join(' '));
     filterValues.push(`news_desk:(${componentString})`)
   }
 
-  const materialsFieldset = document.getElementById('material-types-fieldset');
-  const materialTypes = valuesFromFieldset(materialsFieldset);
-
-  if (materialTypes.length > 0) {
-    let values = materialTypes.map(type => `"${type}"`);
+  if (searchSettings.materialTypes.length > 0) {
+    let values = searchSettings.materialTypes.map(type => `"${type}"`);
     let componentString = encodeURIComponent(values.join(' '));
     filterValues.push(`type_of_material:(${componentString})`)
+  }
+
+  if (searchSettings.glocation) {
+    let componentString = encodeURIComponent(`"${searchSettings.glocation}"`);
+    filterValues.push(`glocations.contains:(${componentString})`);
   }
 
   return filterValues;
@@ -230,12 +210,13 @@ function getKeywordLink(keyword) {
     
     queryInput.value = event.target.textContent;
     sortSelect.value = 'relevance';
+    searchSettings = getFormData();
+    updateBrowserURL();
 
     if (filterMenu.style.display === 'grid') {
       toggleFilterMenuVisibility();
     }
 
-    updateAppURL();
     submitNewSearch();
     scroll(0, 0);
   });
@@ -257,32 +238,22 @@ function handleIntersections(entries) {
   });
 }
 
-function setFormControls () {
-  const url = new URL(window.location);
-  
-  queryInput.value = url.searchParams.get('q');
-  beginDate.value = url.searchParams.get('begin');
-  endDate.value = url.searchParams.get('end');
-  locationInput.value = url.searchParams.get('location');
-  sortSelect.value = url.searchParams.get('sort');
+function setFormControls() {
+  queryInput.value = searchSettings.query;
+  beginDate.value = searchSettings.begin;
+  endDate.value = searchSettings.end;
+  locationInput.value = searchSettings.glocation;
+  sortSelect.value = searchSettings.sortBy;
 
-  const newsDesks = url.searchParams.get('desks');
-  
-  if (newsDesks) {
-    newsDesks.split(',').forEach(desk => {
-      let checkbox = document.querySelector(`input[value="${desk}"]`);
-      checkbox.checked = true;
-    });
-  }
-  
-  const materialTypes = url.searchParams.get('types');
+  searchSettings.newsDesks.forEach(newsDesk => {
+    let checkbox = document.querySelector(`input[value="${newsDesk}"]`);
+    checkbox.checked = true;
+  });
 
-  if (materialTypes) {
-    materialTypes.split(',').forEach(type => {
-      let checkbox = document.querySelector(`input[value="${type}"]`);
-      checkbox.checked = true;
-    });
-  }
+  searchSettings.materialTypes.forEach(type => {
+    let checkbox = document.querySelector(`input[value="${type}"]`);
+    checkbox.checked = true;
+  });
 }
 
 function submitNewSearch() {
@@ -324,6 +295,61 @@ function toggleLoading() {
     articlesContainer.style.opacity = 1;
     loadingMsg.dataset.visibility = 'hidden';
   }
+}
+
+function updateBrowserURL() {
+  const url = new URL(window.location);
+
+  if (searchSettings.query) {
+    url.searchParams.set('q', searchSettings.query);
+  } else {
+    url.searchParams.delete('q');
+  }
+
+  if (searchSettings.begin) {
+    url.searchParams.set('begin', searchSettings.begin);
+  } else {
+    url.searchParams.delete('begin');
+  }
+
+  if (searchSettings.end) {
+    url.searchParams.set('end', searchSettings.end);
+  } else {
+    url.searchParams.delete('end');
+  }
+
+  if (searchSettings.sortBy) {
+    url.searchParams.set('sort', searchSettings.sortBy);
+  } else {
+    url.searchParams.delete('sort');
+  }
+
+  const location = searchSettings.glocation;
+  const newsDesks = searchSettings.newsDesks;
+  const materialTypes = searchSettings.materialTypes;
+
+  if (location) {
+    url.searchParams.set('glocation', locationInput.value);
+  } else {
+    url.searchParams.delete('glocation');
+  }
+  
+  if (newsDesks.length > 0) {
+    let componentString = newsDesks.join(',');
+    url.searchParams.set('desks', componentString);
+  } else {
+    url.searchParams.delete('desks');
+  }
+
+  if (materialTypes.length > 0) {
+    let componentString = materialTypes.join(',');
+    url.searchParams.set('types', componentString);
+  } else {
+    url.searchParams.delete('types');
+  }
+
+  // Set browser URL without refreshing page
+  window.history.pushState({}, '', url);
 }
 
 function valuesFromFieldset(fieldset) {
