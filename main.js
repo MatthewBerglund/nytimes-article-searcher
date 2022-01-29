@@ -9,31 +9,13 @@ const beginDate = document.getElementById('begin-date');
 const endDate = document.getElementById('end-date');
 const locationInput = document.getElementById('location-search');
 
-let searchSettings = {};
-let articles, resultsPage;
+let searchSettings, articles, resultsPage;
 
 bindEvents();
 
 if (window.location.search) {
   const url = new URL(window.location);
-  searchSettings.query = url.searchParams.get('q');
-  searchSettings.begin = url.searchParams.get('begin');
-  searchSettings.end = url.searchParams.get('end');
-  searchSettings.sortBy = url.searchParams.get('sort');
-  searchSettings.glocation = url.searchParams.get('glocation');
-
-  if (url.searchParams.has('desks')) {
-    searchSettings.newsDesks = url.searchParams.get('desks').split(',');
-  } else {
-    searchSettings.newsDesks = [];
-  }
-
-  if (url.searchParams.has('types')) {
-    searchSettings.materialTypes = url.searchParams.get('types').split(',');
-  } else {
-    searchSettings.materialTypes = [];
-  }
-
+  searchSettings = getSearchParams(url);
   setFormControls();
   submitNewSearch();
 }
@@ -222,6 +204,29 @@ function getKeywordLink(keyword) {
   });
 
   return keywordLink;
+}
+
+function getSearchParams(url) {
+  const params = {};
+  params.query = url.searchParams.get('q');
+  params.begin = url.searchParams.get('begin');
+  params.end = url.searchParams.get('end');
+  params.sortBy = url.searchParams.get('sort');
+  params.glocation = url.searchParams.get('glocation');
+
+  if (url.searchParams.has('desks')) {
+    params.newsDesks = url.searchParams.get('desks').split(',');
+  } else {
+    params.newsDesks = [];
+  }
+
+  if (url.searchParams.has('types')) {
+    params.materialTypes = url.searchParams.get('types').split(',');
+  } else {
+    params.materialTypes = [];
+  }
+
+  return params;
 }
 
 function handleIntersections(entries) {
