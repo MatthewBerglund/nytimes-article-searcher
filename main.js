@@ -149,10 +149,10 @@ function getFormData() {
   formData.glocation = locationInput.value.trim();
 
   const newsDeskFieldset = document.getElementById('newsdesk-fieldset');
-  formData.newsDesks = valuesFromFieldset(newsDeskFieldset);
+  formData.newsDesks = getValuesFromFieldset(newsDeskFieldset);
 
   const materialsFieldset = document.getElementById('material-types-fieldset');
-  formData.materialTypes = valuesFromFieldset(materialsFieldset);
+  formData.materialTypes = getValuesFromFieldset(materialsFieldset);
   
   return formData;
 }
@@ -357,7 +357,7 @@ function updateBrowserURL() {
   window.history.pushState({}, '', url);
 }
 
-function valuesFromFieldset(fieldset) {
+function getValuesFromFieldset(fieldset) {
   const elements = Array.from(fieldset.elements);
   const selectedElements = elements.filter(element => element.checked);
   const values = selectedElements.map(element => element.value);
