@@ -13,8 +13,9 @@ let searchSettings, articles, resultsPage;
 
 bindEvents();
 
-if (sessionStorage.getItem('lastSearch')) {
-  searchSettings = JSON.parse(sessionStorage.getItem('lastSearch'));
+if (window.location.search) {
+  const url = new URL(window.location);
+  searchSettings = getSearchParams(url);
   setFormControls();
   submitNewSearch();
 }
@@ -26,13 +27,13 @@ function bindEvents() {
     event.preventDefault();
     sortSelect.value = 'relevance';
     searchSettings = getFormData();
-    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
+    updateBrowserURL();
     submitNewSearch();
   });
   
   sortSelect.addEventListener('change', () => {
-    searchSettings = getFormData();
-    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
+    searchSettings.sortBy = sortSelect.value;
+    updateBrowserURL();
     submitNewSearch();
   });
 
@@ -145,37 +146,34 @@ function getFormData() {
   formData.begin = beginDate.value;
   formData.end = endDate.value;
   formData.sortBy = sortSelect.value;
-  
-  formData.filters = {};
-  formData.filters.glocation = locationInput.value.trim();
+  formData.glocation = locationInput.value.trim();
 
   const newsDeskFieldset = document.getElementById('newsdesk-fieldset');
-  formData.filters.newsDesks = valuesFromFieldset(newsDeskFieldset);
+  formData.newsDesks = getValuesFromFieldset(newsDeskFieldset);
 
   const materialsFieldset = document.getElementById('material-types-fieldset');
-  formData.filters.materialTypes = valuesFromFieldset(materialsFieldset);
+  formData.materialTypes = getValuesFromFieldset(materialsFieldset);
   
   return formData;
 }
 
 function getFilterValuesForURL() {
-  const filters = searchSettings.filters;
   let filterValues = [];
  
-  if (filters.newsDesks.length > 0) {
-    let values = filters.newsDesks.map(newsDesk => `"${newsDesk}"`);
+  if (searchSettings.newsDesks.length > 0) {
+    let values = searchSettings.newsDesks.map(newsDesk => `"${newsDesk}"`);
     let componentString = encodeURIComponent(values.join(' '));
     filterValues.push(`news_desk:(${componentString})`)
   }
 
-  if (filters.materialTypes.length > 0) {
-    let values = filters.materialTypes.map(type => `"${type}"`);
+  if (searchSettings.materialTypes.length > 0) {
+    let values = searchSettings.materialTypes.map(type => `"${type}"`);
     let componentString = encodeURIComponent(values.join(' '));
     filterValues.push(`type_of_material:(${componentString})`)
   }
 
-  if (filters.glocation) {
-    let componentString = encodeURIComponent(`"${filters.glocation}"`);
+  if (searchSettings.glocation) {
+    let componentString = encodeURIComponent(`"${searchSettings.glocation}"`);
     filterValues.push(`glocations.contains:(${componentString})`);
   }
 
@@ -195,7 +193,7 @@ function getKeywordLink(keyword) {
     queryInput.value = event.target.textContent;
     sortSelect.value = 'relevance';
     searchSettings = getFormData();
-    sessionStorage.setItem('lastSearch', JSON.stringify(searchSettings));
+    updateBrowserURL();
 
     if (filterMenu.style.display === 'grid') {
       toggleFilterMenuVisibility();
@@ -206,6 +204,29 @@ function getKeywordLink(keyword) {
   });
 
   return keywordLink;
+}
+
+function getSearchParams(url) {
+  const params = {};
+  params.query = url.searchParams.get('q');
+  params.begin = url.searchParams.get('begin');
+  params.end = url.searchParams.get('end');
+  params.sortBy = url.searchParams.get('sort');
+  params.glocation = url.searchParams.get('glocation');
+
+  if (url.searchParams.has('desks')) {
+    params.newsDesks = url.searchParams.get('desks').split(',');
+  } else {
+    params.newsDesks = [];
+  }
+
+  if (url.searchParams.has('types')) {
+    params.materialTypes = url.searchParams.get('types').split(',');
+  } else {
+    params.materialTypes = [];
+  }
+
+  return params;
 }
 
 function handleIntersections(entries) {
@@ -226,25 +247,18 @@ function setFormControls() {
   queryInput.value = searchSettings.query;
   beginDate.value = searchSettings.begin;
   endDate.value = searchSettings.end;
-  locationInput.value = searchSettings.filters.glocation;
+  locationInput.value = searchSettings.glocation;
   sortSelect.value = searchSettings.sortBy;
 
-  searchSettings.filters.newsDesks.forEach(newsDesk => {
+  searchSettings.newsDesks.forEach(newsDesk => {
     let checkbox = document.querySelector(`input[value="${newsDesk}"]`);
     checkbox.checked = true;
   });
 
-  searchSettings.filters.materialTypes.forEach(type => {
+  searchSettings.materialTypes.forEach(type => {
     let checkbox = document.querySelector(`input[value="${type}"]`);
     checkbox.checked = true;
   });
-}
-
-function valuesFromFieldset(fieldset) {
-  const elements = Array.from(fieldset.elements);
-  const selectedElements = elements.filter(element => element.checked);
-  const values = selectedElements.map(element => element.value);
-  return values;
 }
 
 function submitNewSearch() {
@@ -286,4 +300,66 @@ function toggleLoading() {
     articlesContainer.style.opacity = 1;
     loadingMsg.dataset.visibility = 'hidden';
   }
+}
+
+function updateBrowserURL() {
+  const url = new URL(window.location);
+
+  if (searchSettings.query) {
+    url.searchParams.set('q', searchSettings.query);
+  } else {
+    url.searchParams.delete('q');
+  }
+
+  if (searchSettings.begin) {
+    url.searchParams.set('begin', searchSettings.begin);
+  } else {
+    url.searchParams.delete('begin');
+  }
+
+  if (searchSettings.end) {
+    url.searchParams.set('end', searchSettings.end);
+  } else {
+    url.searchParams.delete('end');
+  }
+
+  if (searchSettings.sortBy) {
+    url.searchParams.set('sort', searchSettings.sortBy);
+  } else {
+    url.searchParams.delete('sort');
+  }
+
+  const location = searchSettings.glocation;
+  const newsDesks = searchSettings.newsDesks;
+  const materialTypes = searchSettings.materialTypes;
+
+  if (location) {
+    url.searchParams.set('glocation', locationInput.value);
+  } else {
+    url.searchParams.delete('glocation');
+  }
+  
+  if (newsDesks.length > 0) {
+    let componentString = newsDesks.join(',');
+    url.searchParams.set('desks', componentString);
+  } else {
+    url.searchParams.delete('desks');
+  }
+
+  if (materialTypes.length > 0) {
+    let componentString = materialTypes.join(',');
+    url.searchParams.set('types', componentString);
+  } else {
+    url.searchParams.delete('types');
+  }
+
+  // Set browser URL without refreshing page
+  window.history.pushState({}, '', url);
+}
+
+function getValuesFromFieldset(fieldset) {
+  const elements = Array.from(fieldset.elements);
+  const selectedElements = elements.filter(element => element.checked);
+  const values = selectedElements.map(element => element.value);
+  return values;
 }
